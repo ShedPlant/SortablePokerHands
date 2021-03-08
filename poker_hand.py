@@ -59,7 +59,7 @@ class PokerHand(object):
         # - Straight Flush
         # - Royal Flush
 
-        # Sort by value, highest first
+        # Sort by value, highest first (ace high)
         #self._logger.debug(self.handOfCards)
         #for card in self.handOfCards: print(card.get_value())
         self.handOfCards = sorted(self.handOfCards, key=lambda x: x.get_value())
