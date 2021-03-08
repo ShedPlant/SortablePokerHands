@@ -1,8 +1,7 @@
 import unittest
 from poker_hand import PokerHand
 
-class TestPokerHand(unittest.TestCase):
-
+class TestPokerHandInputs(unittest.TestCase):
     def test_simple_hand_creation(self):
         royalFlushStr = "KS AS TS QS JS"
         royalFlushHand = PokerHand(royalFlushStr)
@@ -33,6 +32,9 @@ class TestPokerHand(unittest.TestCase):
     def test_no_duplicates_allowed(self):
         with self.assertRaises(Exception):
             PokerHand("KS AS TS QS QS")
+
+#class TestPokerHandSorting(unittest.TestCase):
+
 
 if __name__ == "__main__":
     unittest.main()
