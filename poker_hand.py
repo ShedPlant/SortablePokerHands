@@ -42,15 +42,30 @@ class PokerHand(object):
 
     def set_hand_value(self):
         self.handValue = PokerHandValue.HighCard
-        # TODO work out hand value
-        # algorithm
-        # could have a function one at a time 'is it a royal flush etc'
-        #
-        # sort cards by value / suit ?
-        # probably more efficient to look at each card and rule in (or out?)
-        # possible combinations
-        #sorted_cards_by_value = sorted(self.handOfCards, key=lambda card: card.value)
-        #self._logger.debug("sorted cards: " + sorted_cards_by_value)
+        # At least two cards the same:
+        # - Pair
+        # - Two Pairs
+        # - Three of a Kind
+        # - Full House
+        # - Four of a Kind
+
+        # Sequence:
+        # - Straight
+        # - Straight flush
+        # - Royal Flush
+
+        # Same suit:
+        # - Flush
+        # - Straight Flush
+        # - Royal Flush
+
+        # Sort by value, highest first
+        #self._logger.debug(self.handOfCards)
+        #for card in self.handOfCards: print(card.get_value())
+        self.handOfCards = sorted(self.handOfCards, key=lambda x: x.get_value())
+        #self._logger.debug(self.handOfCards)
+        #for card in self.handOfCards: print(card.get_value())
+
 
 
 

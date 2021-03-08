@@ -1,6 +1,6 @@
-from enum import Enum
+from ordered_enum import OrderedEnum
 
-class CardValue(Enum):
+class CardValue(OrderedEnum):
     Two   = '2'
     Three = '3'
     Four  = '4'
