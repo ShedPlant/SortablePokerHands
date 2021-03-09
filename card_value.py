@@ -1,7 +1,6 @@
 from ordered_enum import OrderedEnum
 
 class CardValue(OrderedEnum):
-    AceLow = 'a'
     Two    = '2'
     Three  = '3'
     Four   = '4'

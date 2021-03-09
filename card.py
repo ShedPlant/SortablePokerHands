@@ -12,8 +12,6 @@ class Card(object):
             raise Exception(cardStr + " is not a valid card!")
 
         self.value = CardValue(cardStr[0])
-        if self.value == CardValue.AceLow:
-            raise Exception("Low ace invalid on creation!")
         self.suit = CardSuit(cardStr[1])
         #_logger.debug("Card created: " + self.describe())
 
