@@ -1,6 +1,6 @@
-from enum import Enum
+from ordered_enum import OrderedEnum
 
-class PokerHandValue(Enum):
+class PokerHandValue(OrderedEnum):
     HighCard      =  "1"
     Pair          =  "2"
     TwoPairs      =  "3"

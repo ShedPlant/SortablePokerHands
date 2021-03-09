@@ -40,6 +40,12 @@ class PokerHand(object):
     def get_value(self):
         return self.hand_value
 
+    # Compare by hand value
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.get_value() < other.get_value()
+        return NotImplemented
+
     def set_hand_value(self):
         # Sort by value, highest first (ace high)
         self.handOfCards = sorted(self.handOfCards, key=lambda card: card.get_value(), reverse=True)
