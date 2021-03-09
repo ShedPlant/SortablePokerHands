@@ -48,6 +48,7 @@ class PokerHand(object):
         first_seen_suit = None
         all_same_suit = True
         previous_card = None
+        num_in_sequence = 1
         all_in_sequence = True
         cardCounter = {}
         for card in self.handOfCards:
@@ -67,9 +68,18 @@ class PokerHand(object):
                 all_same_suit = False
 
             if previous_card:
-                if (previous_card.get_value() - card.get_value()) != 1:
-                    all_in_sequence = False
+                # Cards are adjacent e.g. 3 and 4
+                if (previous_card.get_value() - card.get_value()) == 1:
+                    num_in_sequence = num_in_sequence + 1
+
+                # Special case, low ace adjacent to 2
+                if card.get_value() == CardValue.Two and highest_card == CardValue.Ace:
+                    num_in_sequence = num_in_sequence + 1
+
             previous_card = card
+
+        if num_in_sequence != 5:
+            all_in_sequence = False
 
         matching_card_count = sorted(cardCounter.values(), reverse=True)
         if matching_card_count == [2, 1, 1, 1]:

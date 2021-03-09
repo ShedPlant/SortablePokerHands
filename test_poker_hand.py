@@ -9,6 +9,7 @@ testHands = {
     "TwoPairs": "KC KH 7D 7C 5S",
     "ThreeOfAKind": "KC KH KD 7C 5S",
     "Straight": "3C 4H 5D 6C 7S",
+    "StraightLowAce": "3C 4H 5D 2C AS",
     "Flush": "2C 8C 9C QC KC",
     "FullHouse": "7C KC KH 7S KS",
     "FourOfAKind": "KS 6S 6D 6H 6C",
@@ -81,7 +82,12 @@ class TestPokerHandValue(unittest.TestCase):
 
     def test_straight(self):
         self.assertHandValuedCorrectly(PokerHandValue.Straight)
-        # TODO test low ace
+
+    def test_straight_low_ace(self):
+        self.assertEqual(
+            PokerHand(testHands.get("StraightLowAce")).get_value(),
+            PokerHandValue.Straight
+        )
 
     def test_three_of_a_kind(self):
         self.assertHandValuedCorrectly(PokerHandValue.ThreeOfAKind)
