@@ -30,37 +30,17 @@ class PokerHand(object):
         self._logger.debug(self.describe())
     
     def describe(self):
-        desc = "Poker Hand: " + self.handStr + ": " + self.handValue.name
+        desc = "Poker Hand: " + self.handStr + ": " + self.hand_value.name
         #for card in self.handOfCards:
             #desc += "\n - "
             #desc += card.describe()
-        #desc += "\nValue: " + self.handValue.name
+        #desc += "\nValue: " + self.hand_value.name
         return desc
 
     def get_value(self):
-        return self.handValue
+        return self.hand_value
 
     def set_hand_value(self):
-        # TODO remove stub
-        self.handValue = PokerHandValue.HighCard
-
-        # At least two cards the same:
-        # - Pair
-        # - Two Pairs
-        # - Three of a Kind
-        # - Full House
-        # - Four of a Kind
-
-        # Sequence:
-        # - Straight
-        # - Straight flush
-        # - Royal Flush
-
-        # Same suit:
-        # - Flush
-        # - Straight Flush
-        # - Royal Flush
-
         # Sort by value, highest first (ace high)
         self.handOfCards = sorted(self.handOfCards, key=lambda card: card.get_value(), reverse=True)
 
@@ -93,25 +73,27 @@ class PokerHand(object):
 
         matching_card_count = sorted(cardCounter.values(), reverse=True)
         if matching_card_count == [2, 1, 1, 1]:
-            self.handValue = PokerHandValue.Pair
+            self.hand_value = PokerHandValue.Pair
         elif matching_card_count == [2, 2, 1]:
-            self.handValue = PokerHandValue.TwoPairs
+            self.hand_value = PokerHandValue.TwoPairs
         elif matching_card_count == [3, 1, 1]:
-            self.handValue = PokerHandValue.ThreeOfAKind
+            self.hand_value = PokerHandValue.ThreeOfAKind
         elif matching_card_count == [4, 1]:
-            self.handValue = PokerHandValue.FourOfAKind
+            self.hand_value = PokerHandValue.FourOfAKind
         elif matching_card_count == [3, 2]:
-            self.handValue = PokerHandValue.FullHouse
+            self.hand_value = PokerHandValue.FullHouse
         elif matching_card_count == [1, 1, 1, 1, 1]:
             if all_same_suit:
                 if all_in_sequence:
                     if highest_card == CardValue.Ace:
-                        self.handValue = PokerHandValue.RoyalFlush
+                        self.hand_value = PokerHandValue.RoyalFlush
                     else:
-                        self.handValue = PokerHandValue.StraightFlush
+                        self.hand_value = PokerHandValue.StraightFlush
                 else:
-                    self.handValue = PokerHandValue.Flush
+                    self.hand_value = PokerHandValue.Flush
             elif all_in_sequence:
-                self.handValue = PokerHandValue.Straight
+                self.hand_value = PokerHandValue.Straight
+            else:
+                self.hand_value = PokerHandValue.HighCard
         else:
             raise Exception("Unexpected card combination!")
