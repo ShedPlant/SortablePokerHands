@@ -81,6 +81,7 @@ class TestPokerHandValue(unittest.TestCase):
 
     def test_straight(self):
         self.assertHandValuedCorrectly(PokerHandValue.Straight)
+        # TODO test low ace
 
     def test_three_of_a_kind(self):
         self.assertHandValuedCorrectly(PokerHandValue.ThreeOfAKind)
