@@ -3,65 +3,64 @@ import logging
 from poker_hand import PokerHand
 from poker_hand_value import PokerHandValue
 
-testHands = {
-    "HighCard": "TC 4H 7D KC 2S",
-    "Pair": "KC KH 7D 2C 5S",
-    "TwoPairs": "KC KH 7D 7C 5S",
-    "ThreeOfAKind": "KC KH KD 7C 5S",
-    "Straight": "3C 4H 5D 6C 7S",
-    "StraightLowAce": "3C 4H 5D 2C AS",
-    "Flush": "2C 8C 9C QC KC",
-    "FullHouse": "7C KC KH 7S KS",
-    "FourOfAKind": "KS 6S 6D 6H 6C",
-    "StraightFlush": "5S 6S 2S 3S 4S",
-    "RoyalFlush": "KS AS TS QS JS",
-
-    "TooFewCards": "KS AS TS QS",
-    "TooManyCards": "KS AS TS QS JS 1S",
-    "InvalidValue": "KS AS TS QS XS",
-    "InvalidSuit": "KS AS TS QS JX",
-    "Duplicates": "KS AS TS QS QS"
+test_hands = {
+    "valid": {
+        "HighCard": "TC 4H 7D KC 2S",
+        "Pair": "KC KH 7D 2C 5S",
+        "TwoPairs": "KC KH 7D 7C 5S",
+        "ThreeOfAKind": "KC KH KD 7C 5S",
+        "Straight": "3C 4H 5D 6C 7S",
+        "StraightLowAce": "3C 4H 5D 2C AS",
+        "Flush": "2C 8C 9C QC KC",
+        "FullHouse": "7C KC KH 7S KS",
+        "FourOfAKind": "KS 6S 6D 6H 6C",
+        "StraightFlush": "5S 6S 2S 3S 4S",
+        "RoyalFlush": "KS AS TS QS JS"
+    },
+    "invalid": {
+        "Empty": "",
+        "TooFewCards": "KS AS TS QS",
+        "TooManyCards": "KS AS TS QS JS 1S",
+        "InvalidValue": "KS AS TS QS XS",
+        "InvalidSuit": "KS AS TS QS JX",
+        "Duplicates": "KS AS TS QS QS"
+    }
 }
 
-# TODO reenable
 @unittest.skip("Disable for now")
-class TestPokerHandValidation(unittest.TestCase):
-    def test_simple_hand_creation(self):
-        self.assertEqual(
-            repr(PokerHand(testHands.get("RoyalFlush"))),
-            testHands.get("RoyalFlush")
-            )
-
-    # TODO use more specific, perhaps custom, exceptions
+class TestPokerHandErrorHandling(unittest.TestCase):
+    # TODO use more specific, perhaps custom, exceptions?
 
     def test_no_cards(self):
         with self.assertRaises(Exception):
-            PokerHand("")
+            PokerHand(test_hands["invalid"]["Empty"])
 
     def test_too_few_cards(self):
         with self.assertRaises(Exception):
-            PokerHand(testHands.get("TooFewCards"))
+            PokerHand(test_hands.get("invalid.TooFewCards"))
 
     def test_too_many_cards(self):
         with self.assertRaises(Exception):
-            PokerHand(testHands.get("TooManyCards"))
+            PokerHand(test_hands.get("invalid.TooManyCards"))
 
     def test_invalid_value(self):
         with self.assertRaises(Exception):
-            PokerHand(testHands.get("InvalidValue"))
+            PokerHand(test_hands.get("invalid.InvalidValue"))
 
     def test_invalid_suit(self):
         with self.assertRaises(Exception):
-            PokerHand(testHands.get("InvalidSuit"))
+            PokerHand(test_hands.get("invalid.InvalidSuit"))
 
     def test_no_duplicates_allowed(self):
         with self.assertRaises(Exception):
-            PokerHand(testHands.get("Duplicates"))
+            PokerHand(test_hands.get("invalid.Duplicates"))
 
 class TestPokerHandValue(unittest.TestCase):
     def assertHandValuedCorrectly(self, poker_hand_value):
+        #hand_string = test_hands("valid", {}).get(poker_hand_value.name)
+        hand_string = test_hands["valid"][poker_hand_value.name]
         self.assertEqual(
-            PokerHand(testHands.get(poker_hand_value.name)).get_value(),
+            PokerHand(hand_string).get_value(),
             poker_hand_value
         )
 
@@ -84,8 +83,9 @@ class TestPokerHandValue(unittest.TestCase):
         self.assertHandValuedCorrectly(PokerHandValue.Straight)
 
     def test_straight_low_ace(self):
+        hand_string = test_hands["valid"]["StraightLowAce"]
         self.assertEqual(
-            PokerHand(testHands.get("StraightLowAce")).get_value(),
+            PokerHand(hand_string).get_value(),
             PokerHandValue.Straight
         )
 
@@ -103,6 +103,9 @@ class TestPokerHandValue(unittest.TestCase):
 
 # TODO sorting tests
 # TODO sorting tests to resolve draws (e.g. higher pair)
+class TestPokerHandSorting(unittest.TestCase):
+    def test_pair_beats_high_card(self):
+        pass
 
 if __name__ == "__main__":
     _logger = logging.getLogger(__name__)
