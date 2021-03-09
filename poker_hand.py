@@ -40,17 +40,29 @@ class PokerHand(object):
     def get_value(self):
         return self.hand_value
 
-    # Compare by hand value
+    def get_highest_card(self):
+        return self.highest_card
+
     def __lt__(self, other):
         if self.__class__ is other.__class__:
-            return self.get_value() < other.get_value()
+            if self.get_value() != other.get_value():
+                # Compare by hand value
+                # PokerHandValue ordered lower to higher
+                # but sort better hands first, confusingly less than
+                # TODO reorder PokerHandValue?
+                return self.get_value() > other.get_value()
+            else:
+                # Hands are the same, evaluate draw rules
+                if self.get_value() == PokerHandValue.HighCard:
+                    # CardValue ordered lower to higher
+                    return self.get_highest_card() > other.get_highest_card()
         return NotImplemented
 
     def set_hand_value(self):
         # Sort by value, highest first (ace high)
         self.handOfCards = sorted(self.handOfCards, key=lambda card: card.get_value(), reverse=True)
 
-        highest_card = None
+        self.highest_card = None
         first_seen_suit = None
         all_same_suit = True
         previous_card = None
@@ -58,9 +70,9 @@ class PokerHand(object):
         all_in_sequence = True
         cardCounter = {}
         for card in self.handOfCards:
-            if not highest_card:
+            if not self.highest_card:
                 # List is already sorted, effectively just get the first card
-                highest_card = card.get_value()
+                self.highest_card = card.get_value()
             if not first_seen_suit:
                 first_seen_suit = card.get_suit()
 
@@ -79,7 +91,7 @@ class PokerHand(object):
                     num_in_sequence = num_in_sequence + 1
 
                 # Special case, low ace adjacent to 2
-                if card.get_value() == CardValue.Two and highest_card == CardValue.Ace:
+                if card.get_value() == CardValue.Two and self.highest_card == CardValue.Ace:
                     num_in_sequence = num_in_sequence + 1
 
             previous_card = card
@@ -101,7 +113,7 @@ class PokerHand(object):
         elif matching_card_count == [1, 1, 1, 1, 1]:
             if all_same_suit:
                 if all_in_sequence:
-                    if highest_card == CardValue.Ace:
+                    if self.highest_card == CardValue.Ace:
                         self.hand_value = PokerHandValue.RoyalFlush
                     else:
                         self.hand_value = PokerHandValue.StraightFlush
