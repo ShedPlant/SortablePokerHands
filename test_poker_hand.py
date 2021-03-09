@@ -37,23 +37,23 @@ class TestPokerHandErrorHandling(unittest.TestCase):
 
     def test_too_few_cards(self):
         with self.assertRaises(Exception):
-            PokerHand(test_hands.get("invalid.TooFewCards"))
+            PokerHand(test_hands["invalid"]["TooFewCards"])
 
     def test_too_many_cards(self):
         with self.assertRaises(Exception):
-            PokerHand(test_hands.get("invalid.TooManyCards"))
+            PokerHand(test_hands["invalid"]["TooManyCards"])
 
     def test_invalid_value(self):
         with self.assertRaises(Exception):
-            PokerHand(test_hands.get("invalid.InvalidValue"))
+            PokerHand(test_hands["invalid"]["InvalidValue"])
 
     def test_invalid_suit(self):
         with self.assertRaises(Exception):
-            PokerHand(test_hands.get("invalid.InvalidSuit"))
+            PokerHand(test_hands["invalid"]["InvalidSuit"])
 
     def test_no_duplicates_allowed(self):
         with self.assertRaises(Exception):
-            PokerHand(test_hands.get("invalid.Duplicates"))
+            PokerHand(test_hands["invalid"]["Duplicates"])
 
 class TestPokerHandValue(unittest.TestCase):
     def assertHandValuedCorrectly(self, poker_hand_value):
