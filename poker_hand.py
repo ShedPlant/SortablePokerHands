@@ -45,6 +45,7 @@ class PokerHand(object):
             self.hand_value = self.calc_hand_value(self.hand_of_cards)
             self._logger.debug("Poker Hand: \"" + self.hand_as_string + "\": " + self.hand_value.name)
         except Exception as e:
+            # TODO use more specific, perhaps custom, exceptions?
             self._logger.warning("Poker Hand: \"" + self.hand_as_string + "\" failed!\n" + str(e))
             raise e
 
