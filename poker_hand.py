@@ -95,7 +95,8 @@ class PokerHand(object):
             unique_suits = set(getattr(card, 'suit') for card in hand_as_list_of_card)
             if len(unique_suits) == 1:
                 if num_in_sequence == len(self.hands_sorted_by_group_value):
-                    # Royal Flush is not considered a separate Poker Hand Value
+                    # Simpler to treat Royal Flush as a Straight Flush,
+                    # rather than its own type of hand.
                     self.hand_value = PokerHandValue.StraightFlush
                 else:
                     self.hand_value = PokerHandValue.Flush
@@ -104,7 +105,7 @@ class PokerHand(object):
             else:
                 self.hand_value = PokerHandValue.HighCard
         else:
-            raise Exception("Unexpected group count!\n" + str(group_count))
+            raise Exception("Internal error while processing: " + self.hand_as_string)
 
 
     # Compare this hand with another hand
@@ -121,10 +122,7 @@ class PokerHand(object):
         if self.__class__ is other.__class__:
             if self.hand_value != other.hand_value:
                 # Compare by hand value
-                # PokerHandValue ordered lower to higher
-                # but sort better hands first, confusingly less than
-                # TODO reorder PokerHandValue?
-                return self.hand_value > other.hand_value
+                return self.hand_value < other.hand_value
             else:
                 # Hands are the same, evaluate draw rules
                 # https://www.journaldev.com/37089/how-to-compare-two-lists-in-python

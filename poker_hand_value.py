@@ -1,12 +1,12 @@
 from ordered_enum import OrderedEnum
 
 class PokerHandValue(OrderedEnum):
-    HighCard      =  "1"
-    Pair          =  "2"
-    TwoPairs      =  "3"
-    ThreeOfAKind  =  "4"
-    Straight      =  "5"
-    Flush         =  "6"
-    FullHouse     =  "7"
-    FourOfAKind   =  "8"
     StraightFlush =  "9"
+    FourOfAKind   =  "8"
+    FullHouse     =  "7"
+    Flush         =  "6"
+    Straight      =  "5"
+    ThreeOfAKind  =  "4"
+    TwoPairs      =  "3"
+    Pair          =  "2"
+    HighCard      =  "1"
