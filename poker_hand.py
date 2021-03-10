@@ -43,7 +43,7 @@ class PokerHand(object):
 
             # Get the hand value
             self.hand_value = self.calc_hand_value(self.hand_of_cards)
-            self._logger.debug("Poker Hand: \"" + self.hand_as_string + "\": " + self.hand_value.name)
+            #self._logger.debug("Poker Hand: \"" + self.hand_as_string + "\": " + self.hand_value.name)
         except Exception as e:
             # TODO use more specific, perhaps custom, exceptions?
             self._logger.warning("Poker Hand: \"" + self.hand_as_string + "\" failed!\n" + str(e))
@@ -220,8 +220,7 @@ class PokerHand(object):
     #
     # @param self  = this object
     # @param other = another PokerHand object
-    # @return True if self wins, False if other wins
-    # currently fail if the same
+    # @return True if self wins, False if other wins or same
     def __lt__(self, other):
         if self.__class__ is other.__class__:
             if self.get_value() != other.get_value():
@@ -237,8 +236,7 @@ class PokerHand(object):
                     if mine.get_value() != theirs.get_value():
                         return mine.get_value() > theirs.get_value()
 
-                # TODO Same value of all five cards
-                # Could sort by suit but that doesn't affect winner
-                # Raise Exception for caller to handle tie?
-                return NotImplemented
+                # Same value of all five cards
+                # Arbitrary sorting (possibly first seen?)
+                return False
         return NotImplemented
