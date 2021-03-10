@@ -4,29 +4,29 @@ from card_value import CardValue
 from poker_hand_value import PokerHandValue
 
 class PokerHand(object):
-    def __repr__(self): return self.handStr
+    def __repr__(self): return self.hand_as_string
 
-    def __init__(self, handStr):
-        self.handStr = handStr
+    def __init__(self, hand_as_string):
+        self.hand_as_string = hand_as_string
         self._logger = logging.getLogger(__name__)
 
         #_logger = logging.getLogger(__name__)
-        #self._logger.debug("PokerHand init: " + handStr)
+        #self._logger.debug("PokerHand init: " + hand_as_string)
 
-        handStrList = handStr.split()
-        if len(handStrList) != 5:
+        hand_as_list = hand_as_string.split()
+        if len(hand_as_list) != 5:
             raise Exception("Hand must contain 5 cards!")
-        if list(dict.fromkeys(handStrList)) != handStrList:
+        if list(dict.fromkeys(hand_as_list)) != hand_as_list:
             raise Exception("Hand cannot contain duplicate cards!")
 
         try:
             hand_of_cards = []
-            for cardStr in handStrList:
-                hand_of_cards.append(Card(cardStr))
+            for card_as_string in hand_as_list:
+                hand_of_cards.append(Card(card_as_string))
             self.hand_value = self.calc_hand_value(hand_of_cards)
-            self._logger.debug("Poker Hand: " + self.handStr + ": " + self.hand_value.name)
+            self._logger.debug("Poker Hand: " + self.hand_as_string + ": " + self.hand_value.name)
         except:
-            self._logger.warn("Poker Hand: " + self.handStr + " failed!")
+            self._logger.warn("Poker Hand: " + self.hand_as_string + " failed!")
             raise Exception("One or more cards invalid!")
 
     
@@ -44,7 +44,7 @@ class PokerHand(object):
         previous_card = None
         num_in_sequence = 1
         all_in_sequence = True
-        cardCounter = {}
+        card_counter = {}
         for card in hand_of_cards:
             if not highest_card:
                 # List is already sorted, effectively just get the first card
@@ -53,10 +53,10 @@ class PokerHand(object):
                 first_seen_suit = card.get_suit()
 
             # Keep track of cards with same value
-            if card.get_value() in cardCounter:
-                cardCounter[card.get_value()] = cardCounter[card.get_value()] + 1 
+            if card.get_value() in card_counter:
+                card_counter[card.get_value()] = card_counter[card.get_value()] + 1 
             else:
-                cardCounter[card.get_value()] = 1
+                card_counter[card.get_value()] = 1
 
             if card.get_suit() != first_seen_suit:
                 all_same_suit = False
@@ -75,7 +75,7 @@ class PokerHand(object):
         if num_in_sequence != 5:
             all_in_sequence = False
 
-        matching_card_count = sorted(cardCounter.values(), reverse=True)
+        matching_card_count = sorted(card_counter.values(), reverse=True)
         if matching_card_count == [2, 1, 1, 1]:
             return PokerHandValue.Pair
         elif matching_card_count == [2, 2, 1]:
