@@ -15,10 +15,12 @@ class PokerHandValue(OrderedEnum):
     def get_draw_sorting_type(self):
         simply_sorted_hand_types = [
             PokerHandValue.RoyalFlush,
-            PokerHandValue.StraightFlush,
             PokerHandValue.Flush,
-            PokerHandValue.Straight,
             PokerHandValue.HighCard
+        ]
+        check_for_low_ace = [
+            PokerHandValue.Straight,
+            PokerHandValue.StraightFlush
         ]
         one_group_hand_types = [
             PokerHandValue.FourOfAKind,
@@ -30,10 +32,12 @@ class PokerHandValue(OrderedEnum):
             PokerHandValue.TwoPairs
         ]
         if self in simply_sorted_hand_types:
-            return "all"
+            return "high_to_low"
+        elif self in check_for_low_ace:
+            return "high_to_low_ace_can_be_low"
         elif self in one_group_hand_types:
-            return "one_group"
+            return "one_group_then_kickers"
         elif self in two_group_hand_types:
-            return "two_groups"
+            return "two_groups_then_kickers"
         else:
             NotImplemented

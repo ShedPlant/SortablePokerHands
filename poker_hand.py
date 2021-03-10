@@ -145,11 +145,19 @@ class PokerHand(object):
         tiebreaker = []
         kickers = []
 
-        if self.get_value().get_draw_sorting_type() == "all":
+        if self.get_value().get_draw_sorting_type() in [
+                "high_to_low",
+                "high_to_low_ace_can_be_low"
+            ]:
             # Sort by value, highest first (ace high), ignoring suit
             # TODO able to sort Card class natively by using its CardValue
             tiebreaker = sorted(hand_of_cards, key=lambda card: card.get_value(), reverse=True)
-        elif self.get_value().get_draw_sorting_type() == "one_group":
+
+            if self.get_value().get_draw_sorting_type() == "high_to_low_ace_can_be_low":
+                if tiebreaker[0].get_value() - tiebreaker[1].get_value() != 1:
+                    tiebreaker.append(tiebreaker.pop(0))
+
+        elif self.get_value().get_draw_sorting_type() == "one_group_then_kickers":
             # TODO refactor so same code can handle one/two groups?
             card_counter = collections.Counter(getattr(card, 'value') for card in hand_of_cards)
             most_common = card_counter.most_common(1)[0][0]
@@ -162,7 +170,7 @@ class PokerHand(object):
                     kickers.append(card)
             kickers = sorted(kickers, key=lambda card: card.get_value(), reverse=True)
             tiebreaker = tiebreaker + kickers
-        elif self.get_value().get_draw_sorting_type() == "two_groups":
+        elif self.get_value().get_draw_sorting_type() == "two_groups_then_kickers":
             card_counter = collections.Counter(getattr(card, 'value') for card in hand_of_cards)
             most_common = card_counter.most_common(2)
             first_group = most_common[0][0]
