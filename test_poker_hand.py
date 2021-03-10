@@ -156,20 +156,28 @@ class TestPokerHandSorting(unittest.TestCase):
         # Aware that I could iterate over PokerHandValue members
         # but then would be vulnerable to bugs in that class
         # Here, the ordering is absolutely explicit.
-
+        many_hands_list = []
+        many_hands_list.append(
+            # pylint: disable=maybe-no-member
+            test_hands[PokerHandValue.RoyalFlush.name]["Higher"]
+        )
         # pylint: disable=maybe-no-member
-        self.shuffleAndConfirmHandsSorted([
-            test_hands[PokerHandValue.RoyalFlush.name]["Higher"],
-            test_hands[PokerHandValue.StraightFlush.name]["Higher"],
-            test_hands[PokerHandValue.FourOfAKind.name]["Higher"],
-            test_hands[PokerHandValue.FullHouse.name]["Higher"],
-            test_hands[PokerHandValue.Flush.name]["Higher"],
-            test_hands[PokerHandValue.Straight.name]["Higher"],
-            test_hands[PokerHandValue.ThreeOfAKind.name]["Higher"],
-            test_hands[PokerHandValue.TwoPairs.name]["Higher"],
-            test_hands[PokerHandValue.Pair.name]["Higher"],
-            test_hands[PokerHandValue.HighCard.name]["Higher"]
-        ] )
+        for poker_hand_value in [
+            PokerHandValue.StraightFlush.name,
+            PokerHandValue.FourOfAKind.name,
+            PokerHandValue.FullHouse.name,
+            PokerHandValue.Flush.name,
+            PokerHandValue.Straight.name,
+            PokerHandValue.ThreeOfAKind.name,
+            PokerHandValue.TwoPairs.name,
+            PokerHandValue.Pair.name,
+            PokerHandValue.HighCard.name,
+        ]:
+            for order in ["Higher", "Middle", "Lower"]:
+                many_hands_list.append(
+                    test_hands[poker_hand_value][order]
+                )
+            self.shuffleAndConfirmHandsSorted(many_hands_list)
 
     def shuffleAndConfirmDrawSorted(self,poker_hand_value):
         self.shuffleAndConfirmHandsSorted([
