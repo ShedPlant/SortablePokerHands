@@ -219,37 +219,40 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_draw_straight_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.StraightFlush)
 
-@unittest.skip("Disable for now")
+#@unittest.skip("Disable for now")
 class TestPokerHandSortingPerformance(unittest.TestCase):
     def test_time_to_create_hands(self):
         dealer = Dealer()
         random_hands = []
-        # Benchmark only running this test:
-        #      1  0.000s
-        #     10  0.000s
-        #    100  0.000s
-        #   1000  0.000s
-        #  10000  0.000s
-        # 100000  0.000s
-        number_of_packs_to_benchmark = 100000
+        # Benchmark on home PC only running this test:
+        #      1   0.020s
+        #     10   0.020s
+        #    100   0.056s
+        #   1000   0.531s
+        #  10000   4.663s
+        # 100000  45.672s
+        number_of_packs_to_benchmark = 1000
         _logger.debug("Benchmark start creating PokerHand objects: " + str(number_of_packs_to_benchmark))
         for hand_string in dealer.deal_pack(number_of_packs_to_benchmark):
             random_hands.append(PokerHand(hand_string))
         _logger.debug("Benchmark end creating PokerHand objects: " + str(number_of_packs_to_benchmark))
 
+    # TODO this also creates hands, better to split up timings
     def test_time_to_sort_pack(self):
         dealer = Dealer()
         random_hands = []
-        # Benchmark only running this test:
-        #      1  0.000s
-        #     10  0.000s
-        #    100  0.000s
-        #   1000  0.000s
-        #  10000  0.000s
-        # 100000  0.000s
-        number_of_packs_to_benchmark = 100000
+        # Benchmark on home PC only running this test:
+        #      1   0.038s
+        #     10   0.023s
+        #    100   0.094s
+        #   1000   0.955s
+        #  10000   9.875s
+        # 100000 102.641s
+        number_of_packs_to_benchmark = 1000
+        _logger.debug("Benchmark start creating PokerHand objects: " + str(number_of_packs_to_benchmark))
         for hand_string in dealer.deal_pack(number_of_packs_to_benchmark):
             random_hands.append(PokerHand(hand_string))
+        _logger.debug("Benchmark end creating PokerHand objects: " + str(number_of_packs_to_benchmark))
         _logger.debug("Benchmark now sorting: " + str(number_of_packs_to_benchmark))
         random_hands.sort()
         _logger.debug("Benchmark end sorting: " + str(number_of_packs_to_benchmark))

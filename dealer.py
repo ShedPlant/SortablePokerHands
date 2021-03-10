@@ -2,6 +2,13 @@ from card_value import CardValue
 from card_suit  import CardSuit
 from random import shuffle
 
+"""
+ Create a number of pack of cards
+ Shuffle each one and deal into 5 card hands, throw away the 2 remaining
+ Return the list of hands
+
+ Useful for benchmarking / random testing
+"""
 class Dealer():
     def deal_pack(self, number_of_packs):
         hands = []
