@@ -15,7 +15,9 @@ class CardValue(OrderedEnum):
     King   = 'K'
     Ace    = 'A'
 
-    # Adapted / extended https://github.com/woodruffw/ordered_enum/blob/master/src/ordered_enum/ordered_enum.py
+    # Copied and extended
+    # https://github.com/woodruffw/ordered_enum/blob/master/src/ordered_enum/ordered_enum.py
+    # to add sub
     def __sub__(self, other):
         if self.__class__ is other.__class__:
             member_list = self.__class__._member_list()
