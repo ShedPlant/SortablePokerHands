@@ -4,6 +4,7 @@ from random import shuffle
 
 from poker_hand import PokerHand
 from poker_hand_value import PokerHandValue
+from dealer import Dealer
 
 test_hands = {
     "HighCard": {
@@ -224,22 +225,40 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_draw_straight_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.StraightFlush)
 
+class TestPokerHandSortingPerformance(unittest.TestCase):
+    def test_time_to_sort_pack(self):
+        dealer = Dealer()
+        random_hands = []
+        # Benchmark only running this test:
+        #     1  0.002s
+        #    10  0.024s
+        #   100  0.157s
+        #  1000  1.579s
+        # 10000 17.424s
+        number_of_packs_to_benchmark = 1000
+        _logger.debug("Benchmark start creating PokerHand objects: " + str(number_of_packs_to_benchmark))
+        for hand_string in dealer.deal_pack(number_of_packs_to_benchmark):
+            random_hands.append(PokerHand(hand_string))
+        _logger.debug("Benchmark end creating PokerHand objects: " + str(number_of_packs_to_benchmark))
+
+        _logger.debug("Benchmark now sorting: " + str(number_of_packs_to_benchmark))
+        random_hands.sort()
+        _logger.debug("Benchmark end sorting: " + str(number_of_packs_to_benchmark))
+
 if __name__ == "__main__":
     _logger = logging.getLogger(__name__)
-        #level = logging.DEBUG,
+        #level = logging.INFO,
     logging.basicConfig(
-        level = logging.INFO,
+        level = logging.DEBUG,
         format = '%(asctime)-15s - %(levelname)s - %(message)s'
     )
     _logger.info("Sortable Poker Hands Tests")
     _logger.info("Author: Ed Plant")
-    unittest.main()
+    #unittest.main()
 
     # Run a single test (comment/uncomment as needed)
     # https://stackoverflow.com/questions/15971735/running-a-single-test-from-unittest-testcase-via-the-command-line
-    """
     suite = unittest.TestSuite()
-    suite.addTest(TestPokerHandSorting("test_draw_straight"))
+    suite.addTest(TestPokerHandSortingPerformance("test_time_to_sort_pack"))
     runner = unittest.TextTestRunner()
     runner.run(suite)
-    """
