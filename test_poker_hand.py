@@ -61,37 +61,31 @@ test_hands = {
 
 #@unittest.skip("Disable for now")
 class TestPokerHandErrorHandling(unittest.TestCase):
-    invalid_test_hands = {
-        "Empty":        "",
-        "TooFewCards":  "KS AS TS QS",
-        "TooManyCards": "KS AS TS QS JS 1S",
-        "InvalidValue": "KS AS TS QS XS",
-        "InvalidSuit":  "KS AS TS QS JX"
-    }
-
     def test_no_cards(self):
         with self.assertRaises(Exception):
-            PokerHand(self.invalid_test_hands["Empty"])
+            PokerHand("")
 
     def test_too_few_cards(self):
         with self.assertRaises(Exception):
-            PokerHand(self.invalid_test_hands["TooFewCards"])
+            PokerHand("KS AS TS QS")
 
     def test_too_many_cards(self):
         with self.assertRaises(Exception):
-            PokerHand(self.invalid_test_hands["TooManyCards"])
+            PokerHand("KS AS TS QS JS 1S")
 
     def test_invalid_value(self):
         with self.assertRaises(Exception):
-            PokerHand(self.invalid_test_hands["InvalidValue"])
+            PokerHand("KS AS TS QS XS")
 
     def test_invalid_suit(self):
         with self.assertRaises(Exception):
-            PokerHand(self.invalid_test_hands["InvalidSuit"])
+            PokerHand("KS AS TS QS JX")
 
+    # "Disabled exception to comply with codewars validation"
+    @unittest.expectedFailure
     def test_no_duplicates_allowed(self):
         with self.assertRaises(Exception):
-            PokerHand(self.invalid_test_hands["Duplicates"])
+            PokerHand("KS KS AS QS TS")
 
 #@unittest.skip("Disable for now")
 class TestPokerHandValue(unittest.TestCase):
