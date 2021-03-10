@@ -1,4 +1,5 @@
 import logging
+import collections
 from card import Card
 from card_value import CardValue
 from poker_hand_value import PokerHandValue
@@ -58,20 +59,16 @@ class PokerHand(object):
         previous_card = None
         num_in_sequence = 1
         all_in_sequence = True
-        # TODO use collections.Counter
-        card_counter = {}
+
+        # https://stackoverflow.com/a/40789844
+        card_counter = collections.Counter(getattr(card, 'value') for card in hand_of_cards)
+
         for card in hand_of_cards:
             if not highest_card:
                 # List is already sorted, effectively just get the first card
                 highest_card = card.get_value()
             if not first_seen_suit:
                 first_seen_suit = card.get_suit()
-
-            # Keep track of cards with same value
-            if card.get_value() in card_counter:
-                card_counter[card.get_value()] = card_counter[card.get_value()] + 1 
-            else:
-                card_counter[card.get_value()] = 1
 
             if card.get_suit() != first_seen_suit:
                 all_same_suit = False
