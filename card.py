@@ -2,12 +2,12 @@ from card_value import CardValue
 from card_suit  import CardSuit
 
 class Card(object):
-    def __init__(self, cardStr):
-        if len(cardStr) != 2:
-            raise Exception(cardStr + " is not a valid card!")
+    def __init__(self, card_as_string):
+        if len(card_as_string) != 2:
+            raise Exception(card_as_string + " is not a valid card!")
 
-        self.value = CardValue(cardStr[0])
-        self.suit = CardSuit(cardStr[1])
+        self.value = CardValue(card_as_string[0])
+        self.suit = CardSuit(card_as_string[1])
 
     def get_suit(self):
         return self.suit
