@@ -243,8 +243,9 @@ class TestPokerHandSorting(unittest.TestCase):
 
 if __name__ == "__main__":
     _logger = logging.getLogger(__name__)
+        #level = logging.DEBUG,
     logging.basicConfig(
-        level = logging.DEBUG,
+        level = logging.INFO,
         format = '%(asctime)-15s - %(levelname)s - %(message)s'
     )
     _logger.info("Sortable Poker Hands Tests")
