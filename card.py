@@ -13,13 +13,9 @@ class Card(object):
 
         self.value = CardValue(cardStr[0])
         self.suit = CardSuit(cardStr[1])
-        #_logger.debug("Card created: " + self.describe())
 
     def get_suit(self):
         return self.suit
 
     def get_value(self):
         return self.value
-
-    def describe(self):
-        return self.value.name + " of " + self.suit.name

@@ -27,16 +27,8 @@ class PokerHand(object):
         except:
             raise Exception("One or more cards invalid!")
 
-        self._logger.debug(self.describe())
+        self._logger.debug("Poker Hand: " + self.handStr + ": " + self.hand_value.name)
     
-    def describe(self):
-        desc = "Poker Hand: " + self.handStr + ": " + self.hand_value.name
-        #for card in self.hand_of_cards:
-            #desc += "\n - "
-            #desc += card.describe()
-        #desc += "\nValue: " + self.hand_value.name
-        return desc
-
     def get_value(self):
         return self.hand_value
 
