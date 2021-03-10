@@ -177,6 +177,7 @@ class PokerHand(object):
             for card in hand_of_cards:
                 if card.get_value() == most_common:
                     tiebreaker.append(card)
+                    break
             for card in hand_of_cards:
                 if card.get_value() != most_common:
                     kickers.append(card)
@@ -196,9 +197,11 @@ class PokerHand(object):
             for card in hand_of_cards:
                 if card.get_value() == first_group:
                     tiebreaker.append(card)
+                    break
             for card in hand_of_cards:
                 if card.get_value() == second_group:
                     tiebreaker.append(card)
+                    break
             for card in hand_of_cards:
                 if card.get_value() not in [first_group, second_group]:
                     kickers.append(card)
