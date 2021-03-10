@@ -24,9 +24,6 @@ class PokerHand(object):
         # Reordered hand_of_cards for tie-breaking situation
         self.tiebreaker = None
 
-        #_logger = logging.getLogger(__name__)
-        #self._logger.debug("PokerHand init: " + hand_as_string)
-
         # Input validation
         hand_as_list = hand_as_string.split()
         if len(hand_as_list) != 5:
@@ -40,10 +37,10 @@ class PokerHand(object):
 
             # Get the hand value
             self.hand_value = self.calc_hand_value(self.hand_of_cards)
-            #self._logger.debug("Poker Hand: " + self.hand_as_string + ": " + self.hand_value.name)
-        except:
-            self._logger.warning("Poker Hand: " + self.hand_as_string + " failed!")
-            raise Exception("One or more cards invalid!")
+            self._logger.debug("Poker Hand: \"" + self.hand_as_string + "\": " + self.hand_value.name)
+        except Exception as e:
+            self._logger.warning("Poker Hand: \"" + self.hand_as_string + "\" failed!\n" + str(e))
+            raise e
 
     
     def get_value(self):
