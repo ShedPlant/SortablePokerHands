@@ -42,5 +42,37 @@ An ace can either rank high or rank low in a straight or straight flush. Example
 Note: there are around 25000 random tests, so keep an eye on performances.
 
 https://en.wikipedia.org/wiki/Texas_hold_%27em
+
 https://en.wikipedia.org/wiki/List_of_poker_hands
 
+# Reflections
+I created a class model:
+- CardValue
+- CardSuit
+- Card
+- PokerHandValue
+- PokerHand
+- Dealer (randomly creates hands)
+
+Regression tests cover:
+- Input validation error handling
+- all hand types identified appropriately
+- sorting hands of different hand types (e.g. pair beats high card)
+- sorting hands within same type (e.g. pair of 3s beats pair of 2s)
+- low ace straight special case
+- performance benchmarking of many hands at once
+
+My phases of thinking were:
+- basic class structure and input error validation
+- to identify each hand type
+- compare one hand with another where the hand type differes
+- then think about draws within same type
+
+By that point, I had something that functionally worked but didn't perform very well. It timed out on CodeWars. So I created a benchmark test: 17s to create and sort 10^6 random hands.
+With my fuller understanding of the problem, I went back and started again with a simpler sorting approach that worked whether the hand value were different or the same.
+Reduced benchmark to about 9s.
+However it still times out on the CodeWars full random tests. I'm a little disappointed!
+
+I really enjoyed working on this assignment. I spent about 2 days on it in total.
+
+I would really appreciate any review comments and feedback about any aspects I did well or not so well.
