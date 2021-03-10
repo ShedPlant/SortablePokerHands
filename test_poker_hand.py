@@ -153,6 +153,10 @@ class TestPokerHandSorting(unittest.TestCase):
         ] )
 
     def test_all_hand_types_sorted(self):
+        # Aware that I could iterate over PokerHandValue members
+        # but then would be vulnerable to bugs in that class
+        # Here, the ordering is absolutely explicit.
+
         # pylint: disable=maybe-no-member
         self.shuffleAndConfirmHandsSorted([
             test_hands[PokerHandValue.RoyalFlush.name]["Higher"],
