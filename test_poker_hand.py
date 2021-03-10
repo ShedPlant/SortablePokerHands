@@ -176,6 +176,7 @@ class TestPokerHandSorting(unittest.TestCase):
     #@unittest.skip("Might be useful for debugging but implicit in test_all_hand_types_sorted")
     #@unittest.skip("Disable for now")
     def test_pair_beats_high_card(self):
+        # pylint: disable=maybe-no-member
         self.shuffleAndConfirmHandsSorted([
             test_hands["valid"][PokerHandValue.Pair.name],
             test_hands["valid"][PokerHandValue.HighCard.name]
@@ -183,6 +184,7 @@ class TestPokerHandSorting(unittest.TestCase):
 
     #@unittest.skip("Disable for now")
     def test_all_hand_types_sorted(self):
+        # pylint: disable=maybe-no-member
         self.shuffleAndConfirmHandsSorted([
             test_hands["valid"][PokerHandValue.RoyalFlush.name],
             test_hands["valid"][PokerHandValue.StraightFlush.name],
@@ -228,6 +230,7 @@ class TestPokerHandSorting(unittest.TestCase):
     @unittest.skip("Disable for now")
     @unittest.expectedFailure
     def test_draw_same(self):
+        # pylint: disable=maybe-no-member
         self.shuffleAndConfirmHandsSorted([
             test_hands["draws"][PokerHandValue.Flush.name]["Spades"],
             test_hands["draws"][PokerHandValue.Flush.name]["Hearts"],
