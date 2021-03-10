@@ -51,8 +51,8 @@ test_hands = {
             "Higher": "KC KH KD 7C 5S"
         },
         "Straight": {
-            "Lower":  "3C 4H 5D 2C AS",
-            "Middle": "4H 5D 6C 7S 8C",
+            "Lower":  "2C 3C AC 4C 5C",
+            "Middle": "2D 6D 3D 4D 5D",
             "Higher": "5D 6C 7S 8C 9H"
         },
         "Flush": {
