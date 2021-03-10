@@ -61,7 +61,6 @@ test_hands = {
 
 #@unittest.skip("Disable for now")
 class TestPokerHandErrorHandling(unittest.TestCase):
-    # TODO use more specific, perhaps custom, exceptions?
     invalid_test_hands = {
         "Empty":        "",
         "TooFewCards":  "KS AS TS QS",
@@ -195,12 +194,6 @@ class TestPokerHandSorting(unittest.TestCase):
 
     def test_draw_straight(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Straight)
-        """
-        self.shuffleAndConfirmHandsSorted([
-            test_hands[PokerHandValue.Straight.name]["Middle"],
-            test_hands[PokerHandValue.Straight.name]["Lower"]
-        ] )
-        """
 
     def test_draw_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Flush)
