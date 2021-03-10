@@ -5,114 +5,99 @@ from random import shuffle
 from poker_hand import PokerHand
 from poker_hand_value import PokerHandValue
 
-# TODO some of this could be moved to more specific test classes e.g. draws, invalid
-# but having it in one place is kind of nice
 test_hands = {
-    "valid": {
-        "HighCard":       "TC 4H 7D KC 2S",
-        "Pair":           "KC KH 7D 2C 5S",
-        "TwoPairs":       "KC KH 7D 7C 5S",
-        "ThreeOfAKind":   "KC KH KD 7C 5S",
-        "Straight":       "3C 4H 5D 6C 7S",
-        "StraightLowAce": "3C 4H 5D 2C AS",
-        "Flush":          "2C 8C 9C QC KC",
-        "FullHouse":      "7C KC KH 7S KS",
-        "FourOfAKind":    "KS 6S 6D 6H 6C",
-        "StraightFlush":  "5S 6S 2S 3S 4S",
-        "RoyalFlush":     "KS AS TS QS JS"
-
+    "HighCard": {
+        "Lower":  "TC 4H 7D KC 2S",
+        "Middle": "JC 4H 7D KC 2S",
+        "Higher": "TC 4H 7D AC 2S"
     },
-    "invalid": {
-        "Empty":        "",
-        "TooFewCards":  "KS AS TS QS",
-        "TooManyCards": "KS AS TS QS JS 1S",
-        "InvalidValue": "KS AS TS QS XS",
-        "InvalidSuit":  "KS AS TS QS JX"
+    "Pair": {
+        "Lower":  "KC 8C 8H 7D 5S",
+        "Middle": "5S 8C 8H 7D AC",
+        "Higher": "KC 7D KH 2C 5S"
     },
-    "draws": {
-        "HighCard": {
-            "Lower":  "TC 4H 7D KC 2S",
-            "Middle": "JC 4H 7D KC 2S",
-            "Higher": "TC 4H 7D AC 2S"
-        },
-        "Pair": {
-            "Lower":  "KC 8C 8H 7D 5S",
-            "Middle": "5S 8C 8H 7D AC",
-            "Higher": "KC 7D KH 2C 5S"
-        },
-        "TwoPairs": {
-            "Lower":  "QC QH 6D 6C 5S",
-            "Middle": "QC QH 7D 7C 5S",
-            "Higher": "KC KH 7D 7C 5S"
-        },
-        "ThreeOfAKind": {
-            "Lower":  "JC JH JD 7C 5S",
-            "Middle": "QC QH QD 7C 5S",
-            "Higher": "KC KH KD 7C 5S"
-        },
-        "Straight": {
-            "Lower":  "2C 3C AD 4H 5S",
-            "Middle": "2D 6D 3D 4H 5S",
-            "Higher": "5D 6C 7S 8C 9H"
-        },
-        "Flush": {
-            "Lower":    "2C 8C 9C QC TC",
-            "Middle":   "2C 8C 9C QC KC",
-            "Higher":   "2C 8C 9C QC AC",
-            "Spades":   "2S 8S 9S QS AS",
-            "Hearts":   "2H 8H 9H QH AH",
-            "Diamonds": "2D 8D 9D QD AD"
-        },
-        "FullHouse": {
-            "Lower":  "5C QC QH 5S QS",
-            "Middle": "5C KC KH 5S KS",
-            "Higher": "7C KC KH 7S KS"
-        },
-        "FourOfAKind": {
-            "Lower":  "QS 5S 5D 5H 5C",
-            "Middle": "KS 5S 5D 5H 5C",
-            "Higher": "KS 6S 6D 6H 6C"
-        },
-        "StraightFlush": {
-            "Lower":  "2C 3C AC 4C 5C",
-            "Middle": "2D 6D 3D 4D 5D",
-            "Higher": "5S 8S 6S 4S 7S"
-        }
+    "TwoPairs": {
+        "Lower":  "QC QH 6D 6C 5S",
+        "Middle": "QC QH 7D 7C 5S",
+        "Higher": "KC KH 7D 7C 5S"
+    },
+    "ThreeOfAKind": {
+        "Lower":  "JC JH JD 7C 5S",
+        "Middle": "QC QH QD 7C 5S",
+        "Higher": "KC KH KD 7C 5S"
+    },
+    "Straight": {
+        "Lower":  "2C 3C AD 4H 5S",
+        "Middle": "2D 6D 3D 4H 5S",
+        "Higher": "5D 6C 7S 8C 9H"
+    },
+    "Flush": {
+        "Lower":    "2C 8C 9C QC TC",
+        "Middle":   "2C 8C 9C QC KC",
+        "Higher":   "2C 8C 9C QC AC",
+        "Spades":   "2S 8S 9S QS AS",
+        "Hearts":   "2H 8H 9H QH AH",
+        "Diamonds": "2D 8D 9D QD AD"
+    },
+    "FullHouse": {
+        "Lower":  "5C QC QH 5S QS",
+        "Middle": "5C KC KH 5S KS",
+        "Higher": "7C KC KH 7S KS"
+    },
+    "FourOfAKind": {
+        "Lower":  "QS 5S 5D 5H 5C",
+        "Middle": "KS 5S 5D 5H 5C",
+        "Higher": "KS 6S 6D 6H 6C"
+    },
+    "StraightFlush": {
+        "Lower":  "2C 3C AC 4C 5C",
+        "Middle": "2D 6D 3D 4D 5D",
+        "Higher": "5S 8S 6S 4S 7S"
+    },
+    "RoyalFlush": {
+        "Higher": "KS AS TS QS JS"
     }
 }
 
 #@unittest.skip("Disable for now")
 class TestPokerHandErrorHandling(unittest.TestCase):
     # TODO use more specific, perhaps custom, exceptions?
+    invalid_test_hands = {
+        "Empty":        "",
+        "TooFewCards":  "KS AS TS QS",
+        "TooManyCards": "KS AS TS QS JS 1S",
+        "InvalidValue": "KS AS TS QS XS",
+        "InvalidSuit":  "KS AS TS QS JX"
+    }
 
     def test_no_cards(self):
         with self.assertRaises(Exception):
-            PokerHand(test_hands["invalid"]["Empty"])
+            PokerHand(self.invalid_test_hands["Empty"])
 
     def test_too_few_cards(self):
         with self.assertRaises(Exception):
-            PokerHand(test_hands["invalid"]["TooFewCards"])
+            PokerHand(self.invalid_test_hands["TooFewCards"])
 
     def test_too_many_cards(self):
         with self.assertRaises(Exception):
-            PokerHand(test_hands["invalid"]["TooManyCards"])
+            PokerHand(self.invalid_test_hands["TooManyCards"])
 
     def test_invalid_value(self):
         with self.assertRaises(Exception):
-            PokerHand(test_hands["invalid"]["InvalidValue"])
+            PokerHand(self.invalid_test_hands["InvalidValue"])
 
     def test_invalid_suit(self):
         with self.assertRaises(Exception):
-            PokerHand(test_hands["invalid"]["InvalidSuit"])
+            PokerHand(self.invalid_test_hands["InvalidSuit"])
 
     def test_no_duplicates_allowed(self):
         with self.assertRaises(Exception):
-            PokerHand(test_hands["invalid"]["Duplicates"])
+            PokerHand(self.invalid_test_hands["Duplicates"])
 
 #@unittest.skip("Disable for now")
 class TestPokerHandValue(unittest.TestCase):
     def assertHandValuedCorrectly(self, poker_hand_value):
-        hand_string = test_hands["valid"][poker_hand_value.name]
+        hand_string = test_hands[poker_hand_value.name]["Higher"]
         self.assertEqual(
             PokerHand(hand_string).get_value(),
             poker_hand_value
@@ -135,13 +120,6 @@ class TestPokerHandValue(unittest.TestCase):
 
     def test_straight(self):
         self.assertHandValuedCorrectly(PokerHandValue.Straight)
-
-    def test_straight_low_ace(self):
-        hand_string = test_hands["valid"]["StraightLowAce"]
-        self.assertEqual(
-            PokerHand(hand_string).get_value(),
-            PokerHandValue.Straight
-        )
 
     def test_three_of_a_kind(self):
         self.assertHandValuedCorrectly(PokerHandValue.ThreeOfAKind)
@@ -177,30 +155,30 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_pair_beats_high_card(self):
         # pylint: disable=maybe-no-member
         self.shuffleAndConfirmHandsSorted([
-            test_hands["valid"][PokerHandValue.Pair.name],
-            test_hands["valid"][PokerHandValue.HighCard.name]
+            test_hands[PokerHandValue.Pair.name]["Higher"],
+            test_hands[PokerHandValue.HighCard.name]["Higher"]
         ] )
 
     def test_all_hand_types_sorted(self):
         # pylint: disable=maybe-no-member
         self.shuffleAndConfirmHandsSorted([
-            test_hands["valid"][PokerHandValue.RoyalFlush.name],
-            test_hands["valid"][PokerHandValue.StraightFlush.name],
-            test_hands["valid"][PokerHandValue.FourOfAKind.name],
-            test_hands["valid"][PokerHandValue.FullHouse.name],
-            test_hands["valid"][PokerHandValue.Flush.name],
-            test_hands["valid"][PokerHandValue.Straight.name],
-            test_hands["valid"][PokerHandValue.ThreeOfAKind.name],
-            test_hands["valid"][PokerHandValue.TwoPairs.name],
-            test_hands["valid"][PokerHandValue.Pair.name],
-            test_hands["valid"][PokerHandValue.HighCard.name]
+            test_hands[PokerHandValue.RoyalFlush.name]["Higher"],
+            test_hands[PokerHandValue.StraightFlush.name]["Higher"],
+            test_hands[PokerHandValue.FourOfAKind.name]["Higher"],
+            test_hands[PokerHandValue.FullHouse.name]["Higher"],
+            test_hands[PokerHandValue.Flush.name]["Higher"],
+            test_hands[PokerHandValue.Straight.name]["Higher"],
+            test_hands[PokerHandValue.ThreeOfAKind.name]["Higher"],
+            test_hands[PokerHandValue.TwoPairs.name]["Higher"],
+            test_hands[PokerHandValue.Pair.name]["Higher"],
+            test_hands[PokerHandValue.HighCard.name]["Higher"]
         ] )
 
     def shuffleAndConfirmDrawSorted(self,poker_hand_value):
         self.shuffleAndConfirmHandsSorted([
-            test_hands["draws"][poker_hand_value.name]["Higher"],
-            test_hands["draws"][poker_hand_value.name]["Middle"],
-            test_hands["draws"][poker_hand_value.name]["Lower"]
+            test_hands[poker_hand_value.name]["Higher"],
+            test_hands[poker_hand_value.name]["Middle"],
+            test_hands[poker_hand_value.name]["Lower"]
         ] )
 
     def test_draw_high_card(self):
@@ -219,8 +197,8 @@ class TestPokerHandSorting(unittest.TestCase):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Straight)
         """
         self.shuffleAndConfirmHandsSorted([
-            test_hands["draws"][PokerHandValue.Straight.name]["Middle"],
-            test_hands["draws"][PokerHandValue.Straight.name]["Lower"]
+            test_hands[PokerHandValue.Straight.name]["Middle"],
+            test_hands[PokerHandValue.Straight.name]["Lower"]
         ] )
         """
 
@@ -231,10 +209,10 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_draw_same(self):
         # pylint: disable=maybe-no-member
         self.shuffleAndConfirmHandsSorted([
-            test_hands["draws"][PokerHandValue.Flush.name]["Spades"],
-            test_hands["draws"][PokerHandValue.Flush.name]["Hearts"],
-            test_hands["draws"][PokerHandValue.Flush.name]["Diamonds"],
-            test_hands["draws"][PokerHandValue.Flush.name]["Clubs"]
+            test_hands[PokerHandValue.Flush.name]["Spades"],
+            test_hands[PokerHandValue.Flush.name]["Hearts"],
+            test_hands[PokerHandValue.Flush.name]["Diamonds"],
+            test_hands[PokerHandValue.Flush.name]["Clubs"]
         ] )
         # By definition, two royal flush hands have same value
 
