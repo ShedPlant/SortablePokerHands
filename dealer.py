@@ -15,6 +15,7 @@ class Dealer():
 
         while number_of_packs_completed < number_of_packs:
             shuffle(pack)
+            # TODO can this be used or does it impact performance itself?
             """start_index = 0
             end_index = 5
                 while end_index < 50:

@@ -6,6 +6,7 @@ class Card(object):
         if len(card_as_string) != 2:
             raise Exception(card_as_string + " is not a valid card!")
 
+        # This will raise exception if input was invalid
         self.value = CardValue(card_as_string[0])
         self.suit = CardSuit(card_as_string[1])
 

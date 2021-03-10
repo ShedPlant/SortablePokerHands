@@ -10,23 +10,16 @@ from poker_hand_value import PokerHandValue
 class PokerHand(object):
     def __repr__(self): return self.hand_as_string
 
-
     def __init__(self, hand_as_string):
         self._logger = logging.getLogger(__name__)
+
         # A string representation, never changed after initialisation
+        # e.g. "5C 9D KH 9C 3S"
         self.hand_as_string = hand_as_string
-        # A list of Card objects
-        self.hand_of_cards = []
-
-        # PokerHandValue
-        self.hand_value = None
-
-        # Reordered hand_of_cards for tie-breaking situation
-        self.card_counter = None
-        self.tiebreaker = None
 
         # Input validation
         hand_as_list = hand_as_string.split()
+        # ["5C", "9D", "KH", "9C", "3S"]
         if len(hand_as_list) != 5:
             raise Exception("Hand must contain 5 cards!")
         if list(dict.fromkeys(hand_as_list)) != hand_as_list:
@@ -39,206 +32,107 @@ class PokerHand(object):
             pass
 
         try:
+            # Convert string to list of Card objects
+            hand_as_list_of_card = []
             for card_as_string in hand_as_list:
-                self.hand_of_cards.append(Card(card_as_string))
-
-            # https://stackoverflow.com/a/40789844
-            self.card_counter = collections.Counter(getattr(card, 'value') for card in self.hand_of_cards)
-
-            # Get the hand value
-            self.hand_value = self.calc_hand_value(self.hand_of_cards)
-            #self._logger.debug("Poker Hand: \"" + self.hand_as_string + "\": " + self.hand_value.name)
+                hand_as_list_of_card.append(Card(card_as_string))
         except Exception as e:
             # TODO use more specific, perhaps custom, exceptions?
             self._logger.warning("Poker Hand: \"" + self.hand_as_string + "\" failed!\n" + str(e))
             raise e
 
-    
-    def get_value(self):
-        return self.hand_value
+        # Just look at card values, ignore suits
+        # Want it sorted:
+        # Groups with more cards take precedence.
+        # If groups of equal size, highest card takes precedence.
+        # Achieve this by two sorts in reverse order.
+        self.hands_sorted_by_group_value = collections.Counter(getattr(card, 'value') for card in hand_as_list_of_card)
+        #self._logger.debug(self.hands_sorted_by_group_value)
+        #Counter({<CardValue.Nine: '9'>: 2, <CardValue.Five: '5'>: 1, <CardValue.King: 'K'>: 1, <CardValue.Three: '3'>: 1})
 
+        self.hands_sorted_by_group_value = dict(sorted(self.hands_sorted_by_group_value.items(), key=lambda item: item[0], reverse=True))
+        #self._logger.debug(self.hands_sorted_by_group_value)
+        # {<CardValue.King: 'K'>: 1, <CardValue.Nine: '9'>: 2, <CardValue.Five: '5'>: 1, <CardValue.Three: '3'>: 1}
 
-    def get_tiebreaker(self):
-        if not self.tiebreaker:
-            # Don't calculate on object creation, for speed
-            # since not always needed
-            self.tiebreaker = self.calc_tiebreaker(self.hand_of_cards)
-
-        return self.tiebreaker
-
-
-    # Calculate a hand value (e.g. pair or full house)
-    #
-    # @param hand_of_cards = a list of 5 Card objects
-    # @return a PokerHandValue for hand_of_cards
-    def calc_hand_value(self, hand_of_cards):
-        # hand_of_cards is a local variable, this proc doesn't manipulate the object's hand.
-        highest_card = None
-        first_seen_suit = None
-        all_same_suit = True
-        previous_card = None
-        num_in_sequence = 1
-        all_in_sequence = True
-        low_ace_adjusted = False
-
-        # Sort by value, highest first (ace high), ignoring suit
-        # TODO able to sort Card class natively by using its CardValue
-        hand_of_cards = sorted(hand_of_cards, key=lambda card: card.get_value(), reverse=True)
-
-        for card in hand_of_cards:
-            if not highest_card:
-                # List is already sorted, effectively just get the first card
-                highest_card = card.get_value()
-            if not first_seen_suit:
-                first_seen_suit = card.get_suit()
-
-            if card.get_suit() != first_seen_suit:
-                all_same_suit = False
-
-            if previous_card:
-                if (previous_card.get_value() - card.get_value()) == 1:
-                    # Cards are adjacent e.g. 3 and 4
-                    num_in_sequence = num_in_sequence + 1
-
-                # Special case, low ace adjacent to 2
-                # So, can't use a simple boolean 'all_in_sequence', like done with suit
-                if (not low_ace_adjusted and
-                    card.get_value() == CardValue.Two and highest_card == CardValue.Ace):
-                    num_in_sequence = num_in_sequence + 1
-                    low_ace_adjusted = True
-
-            previous_card = card
-
-        if num_in_sequence != len(hand_of_cards):
-            all_in_sequence = False
+        self.hands_sorted_by_group_value = dict(sorted(self.hands_sorted_by_group_value.items(), key=lambda item: item[1], reverse=True))
+        #self._logger.debug(self.hands_sorted_by_group_value)
+        # {<CardValue.Nine: '9'>: 2, <CardValue.King: 'K'>: 1, <CardValue.Five: '5'>: 1, <CardValue.Three: '3'>: 1}
 
         # Get a list of the number of matching cards (regardless of their face value)
         # Then can return appropriate PokerHandValue
-        matching_card_count = sorted(self.card_counter.values(), reverse=True)
-        if matching_card_count == [2, 1, 1, 1]:
-            return PokerHandValue.Pair
-        elif matching_card_count == [2, 2, 1]:
-            return PokerHandValue.TwoPairs
-        elif matching_card_count == [3, 1, 1]:
-            return PokerHandValue.ThreeOfAKind
-        elif matching_card_count == [4, 1]:
-            return PokerHandValue.FourOfAKind
-        elif matching_card_count == [3, 2]:
-            return PokerHandValue.FullHouse
-        elif matching_card_count == [1, 1, 1, 1, 1]:
-            if all_same_suit:
-                if all_in_sequence:
-                    if not low_ace_adjusted and highest_card == CardValue.Ace:
-                        return PokerHandValue.RoyalFlush
-                    else:
-                        return PokerHandValue.StraightFlush
+        group_count = list(self.hands_sorted_by_group_value.values())
+        #self._logger.debug(group_count)
+        if group_count == [2, 1, 1, 1]:
+            self.hand_value = PokerHandValue.Pair
+        elif group_count == [2, 2, 1]:
+            self.hand_value = PokerHandValue.TwoPairs
+        elif group_count == [3, 1, 1]:
+            self.hand_value = PokerHandValue.ThreeOfAKind
+        elif group_count == [4, 1]:
+            self.hand_value = PokerHandValue.FourOfAKind
+        elif group_count == [3, 2]:
+            self.hand_value = PokerHandValue.FullHouse
+        elif group_count == [1, 1, 1, 1, 1]:
+
+            if (CardValue.Ace   in self.hands_sorted_by_group_value and
+                CardValue.Two   in self.hands_sorted_by_group_value and
+                CardValue.Three in self.hands_sorted_by_group_value and
+                CardValue.Four  in self.hands_sorted_by_group_value and
+                CardValue.Five  in self.hands_sorted_by_group_value):
+                # Move Ace to Ace Low
+                # This hand combination is the *only* time it's ever used
+                self.hands_sorted_by_group_value[CardValue.AceLow] = self.hands_sorted_by_group_value.pop(CardValue.Ace)
+                
+            previous_val = None
+            num_in_sequence = 1
+            for current_val in self.hands_sorted_by_group_value:
+                if previous_val:
+                    if previous_val - current_val == 1:
+                        num_in_sequence = num_in_sequence + 1
+
+                previous_val = current_val
+
+            unique_suits = set(getattr(card, 'suit') for card in hand_as_list_of_card)
+            if len(unique_suits) == 1:
+                if num_in_sequence == len(self.hands_sorted_by_group_value):
+                    # Royal Flush is not considered a separate Poker Hand Value
+                    self.hand_value = PokerHandValue.StraightFlush
                 else:
-                    return PokerHandValue.Flush
-            elif all_in_sequence:
-                return PokerHandValue.Straight
+                    self.hand_value = PokerHandValue.Flush
+            elif num_in_sequence == len(self.hands_sorted_by_group_value):
+                self.hand_value = PokerHandValue.Straight
             else:
-                return PokerHandValue.HighCard
+                self.hand_value = PokerHandValue.HighCard
         else:
-            raise Exception("Unexpected card combination!")
+            raise Exception("Unexpected group count!\n" + str(group_count))
 
-
-    # Calculate tie-breaker sorted list of Cards for comparing two hands with same PokerHandValue
-    # Different PokerHandValue's have different rules about how to calculate draws
-    #
-    # @param hand_of_cards = a list of 5 Card objects
-    #
-    # @return tiebreaker = hand_of_cards re-ordered for easier comparison against another tiebreaker hand
-    # e.g. for following input list of Card objects
-    #      ["8C", "5S", "7D", "2C", "8H"]
-    # e.g. put the 8s first to represent the pair (don't need the second), then kickers in descending order
-    #      ["8C", "7D", "5S", "2C"]
-    def calc_tiebreaker(self, hand_of_cards):
-        tiebreaker = []
-        kickers = []
-
-        if self.get_value().get_draw_sorting_type() in [
-                "high_to_low",
-                "high_to_low_ace_can_be_low"
-            ]:
-            # Sort by value, highest first (ace high), ignoring suit
-            # TODO able to sort Card class natively by using its CardValue
-            tiebreaker = sorted(hand_of_cards, key=lambda card: card.get_value(), reverse=True)
-
-            if self.get_value().get_draw_sorting_type() == "high_to_low_ace_can_be_low":
-                if tiebreaker[0].get_value() - tiebreaker[1].get_value() != 1:
-                    low_ace_suit = tiebreaker[0].get_suit()
-                    low_ace_string = "a" + low_ace_suit.value
-                    tiebreaker.pop(0)
-                    tiebreaker.append(Card(low_ace_string))
-        elif self.get_value().get_draw_sorting_type() == "one_group_then_kickers":
-            # TODO refactor so same code can handle one/two groups?
-            most_common = self.card_counter.most_common(1)[0][0]
-            # Insert group value, then kickers
-            for card in hand_of_cards:
-                if card.get_value() == most_common:
-                    tiebreaker.append(card)
-                    break
-            for card in hand_of_cards:
-                if card.get_value() != most_common:
-                    kickers.append(card)
-            kickers = sorted(kickers, key=lambda card: card.get_value(), reverse=True)
-            tiebreaker = tiebreaker + kickers
-        elif self.get_value().get_draw_sorting_type() == "two_groups_then_kickers":
-            most_common = self.card_counter.most_common(2)
-            first_group = most_common[0][0]
-            second_group = most_common[1][0]
-
-            # Collection returns pairs in order first seen,
-            # but highest group should go first
-            if first_group < second_group:
-                first_group, second_group = second_group, first_group
-
-            # Insert highest group, then second group, then kickers
-            for card in hand_of_cards:
-                if card.get_value() == first_group:
-                    tiebreaker.append(card)
-                    break
-            for card in hand_of_cards:
-                if card.get_value() == second_group:
-                    tiebreaker.append(card)
-                    break
-            for card in hand_of_cards:
-                if card.get_value() not in [first_group, second_group]:
-                    kickers.append(card)
-            kickers = sorted(kickers, key=lambda card: card.get_value(), reverse=True)
-            tiebreaker = tiebreaker + kickers
-        else:
-            return NotImplemented
-
-        return tiebreaker
 
     # Compare this hand with another hand
-    # First compare hand PokerHandValue, if they match there is a winner.
+    # First compare hand PokerHandValue, if they do not match there is a winner.
     #
     # If the two hands have same PokerHandValue,
-    # call get_tiebreaker (calc_tiebreaker) to reorder both hands
-    # in such a way both hands can be compared one hand at a time
-    # to find the winner.
+    # Groups with more cards take precedence.
+    # If groups of equal size, highest card takes precedence.
     #
     # @param self  = this object
     # @param other = another PokerHand object
     # @return True if self wins, False if other wins or same
     def __lt__(self, other):
         if self.__class__ is other.__class__:
-            if self.get_value() != other.get_value():
+            if self.hand_value != other.hand_value:
                 # Compare by hand value
                 # PokerHandValue ordered lower to higher
                 # but sort better hands first, confusingly less than
                 # TODO reorder PokerHandValue?
-                return self.get_value() > other.get_value()
+                return self.hand_value > other.hand_value
             else:
                 # Hands are the same, evaluate draw rules
                 # https://www.journaldev.com/37089/how-to-compare-two-lists-in-python
-                for mine, theirs in zip(self.get_tiebreaker(), other.get_tiebreaker()):
-                    if mine.get_value() != theirs.get_value():
-                        return mine.get_value() > theirs.get_value()
+                for mine, theirs in zip(self.hands_sorted_by_group_value, other.hands_sorted_by_group_value):
+                    if mine != theirs:
+                        return mine > theirs
 
                 # Same value of all five cards
-                # Arbitrary sorting (possibly first seen?)
+                # Stable sorting
                 return False
         return NotImplemented

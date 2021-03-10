@@ -53,14 +53,11 @@ test_hands = {
     "StraightFlush": {
         "Lower":  "2C 3C AC 4C 5C",
         "Middle": "2D 6D 3D 4D 5D",
-        "Higher": "5S 8S 6S 4S 7S"
-    },
-    "RoyalFlush": {
         "Higher": "KS AS TS QS JS"
     }
 }
 
-@unittest.skip("Disable for now")
+#@unittest.skip("Disable for now")
 class TestPokerHandErrorHandling(unittest.TestCase):
     def test_no_cards(self):
         with self.assertRaises(Exception):
@@ -98,12 +95,9 @@ class TestPokerHandValue(unittest.TestCase):
             )
         for hand_string in many_hands_list:
             self.assertEqual(
-                PokerHand(hand_string).get_value(),
+                PokerHand(hand_string).hand_value,
                 poker_hand_value
             )
-
-    def test_royal_flush(self):
-        self.assertHandValuedCorrectly(PokerHandValue.RoyalFlush)
 
     def test_straight_flush(self):
         self.assertHandValuedCorrectly(PokerHandValue.StraightFlush)
@@ -132,7 +126,7 @@ class TestPokerHandValue(unittest.TestCase):
     def test_high_card(self):
         self.assertHandValuedCorrectly(PokerHandValue.HighCard)
 
-@unittest.skip("Disable for now")
+#@unittest.skip("Disable for now")
 class TestPokerHandSorting(unittest.TestCase):
     def shuffleAndConfirmHandsSorted(self, list_of_hand_strings):
         manually_sorted_hands = []
@@ -158,17 +152,11 @@ class TestPokerHandSorting(unittest.TestCase):
             test_hands[PokerHandValue.HighCard.name]["Higher"]
         ] )
 
-    @unittest.expectedFailure
-    # TODO low ace support again
     def test_all_hand_types_sorted(self):
         # Aware that I could iterate over PokerHandValue members
         # but then would be vulnerable to bugs in that class
         # Here, the ordering is absolutely explicit.
         many_hands_list = []
-        many_hands_list.append(
-            # pylint: disable=maybe-no-member
-            test_hands[PokerHandValue.RoyalFlush.name]["Higher"]
-        )
         # pylint: disable=maybe-no-member
         for poker_hand_value in [
             PokerHandValue.StraightFlush.name,
@@ -206,8 +194,6 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_draw_three_of_a_kind(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.ThreeOfAKind)
 
-    @unittest.expectedFailure
-    # TODO low ace support again
     def test_draw_straight(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Straight)
 
@@ -223,7 +209,6 @@ class TestPokerHandSorting(unittest.TestCase):
             test_hands[PokerHandValue.Flush.name]["Diamonds"],
             test_hands[PokerHandValue.Flush.name]["Clubs"]
         ] )
-        # By definition, two royal flush hands have same value
 
     def test_draw_full_house(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.FullHouse)
@@ -231,11 +216,8 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_draw_four_of_a_kind(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.FourOfAKind)
 
-    @unittest.expectedFailure
-    # TODO low ace support again
     def test_draw_straight_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.StraightFlush)
-
 
 @unittest.skip("Disable for now")
 class TestPokerHandSortingPerformance(unittest.TestCase):
@@ -279,13 +261,13 @@ if __name__ == "__main__":
     )
     _logger.info("Sortable Poker Hands Tests")
     _logger.info("Author: Ed Plant")
-    #unittest.main()
+    unittest.main()
 
     # Run a single test (comment/uncomment as needed)
     # https://stackoverflow.com/questions/15971735/running-a-single-test-from-unittest-testcase-via-the-command-line
-    suite = unittest.TestSuite()
     #suite.addTest(TestPokerHandSortingPerformance("test_time_to_create_hands"))
     """
+    suite = unittest.TestSuite()
     suite.addTest(TestPokerHandValue("test_high_card"))
     suite.addTest(TestPokerHandValue("test_flush"))
     suite.addTest(TestPokerHandSorting("test_draw_high_card"))
@@ -299,7 +281,6 @@ if __name__ == "__main__":
     suite.addTest(TestPokerHandSorting("test_draw_straight"))
     suite.addTest(TestPokerHandValue("test_straight_flush"))
     suite.addTest(TestPokerHandSorting("test_draw_straight_flush"))
-    """
-    suite.addTest(TestPokerHandValue("test_royal_flush"))
     runner = unittest.TextTestRunner()
     runner.run(suite)
+    """
