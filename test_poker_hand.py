@@ -57,7 +57,11 @@ test_hands = {
         "Flush": {
             "Lower":  "2C 8C 9C QC TC",
             "Middle": "2C 8C 9C QC KC",
-            "Higher": "2C 8C 9C QC KC"
+            "Higher": "2C 8C 9C QC AC",
+            "Spades": "2S 8S 9S QS AS",
+            "Hearts": "2H 8H 9H QH AH",
+            "Diamonds": "2D 8D 9D QD AD",
+            "Clubs":  "2C 8C 9C QC AC"
         },
         "FullHouse": {
             "Lower":  "5C QC QH 5S QS",
@@ -151,6 +155,7 @@ class TestPokerHandValue(unittest.TestCase):
     def test_high_card(self):
         self.assertHandValuedCorrectly(PokerHandValue.HighCard)
 
+#@unittest.skip("Disable for now")
 class TestPokerHandSorting(unittest.TestCase):
     def shuffleAndConfirmHandsSorted(self, list_of_hand_strings):
         manually_sorted_hands = []
@@ -196,7 +201,6 @@ class TestPokerHandSorting(unittest.TestCase):
             test_hands["draws"][poker_hand_value.name]["Lower"]
         ] )
 
-    @unittest.expectedFailure
     def test_draw_high_card(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.HighCard)
 
@@ -212,13 +216,20 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_draw_three_of_a_kind(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.ThreeOfAKind)
 
-    @unittest.expectedFailure
     def test_draw_straight(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Straight)
 
-    @unittest.expectedFailure
     def test_draw_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Flush)
+
+    @unittest.expectedFailure
+    def test_draw_same(self):
+        self.shuffleAndConfirmHandsSorted([
+            test_hands["draws"][PokerHandValue.Flush.name]["Spades"],
+            test_hands["draws"][PokerHandValue.Flush.name]["Hearts"],
+            test_hands["draws"][PokerHandValue.Flush.name]["Diamonds"],
+            test_hands["draws"][PokerHandValue.Flush.name]["Clubs"]
+        ] )
 
     @unittest.expectedFailure
     def test_draw_full_house(self):
@@ -228,11 +239,11 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_draw_four_of_a_kind(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.FourOfAKind)
 
-    @unittest.expectedFailure
     def test_draw_straight_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.StraightFlush)
 
     # By definition, two royal flush hands have same value
+    # Undefined sorting
 
 
     # TODO sorting tests to resolve complex draws

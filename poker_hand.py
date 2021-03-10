@@ -7,8 +7,11 @@ class PokerHand(object):
     def __repr__(self): return self.hand_as_string
 
     def __init__(self, hand_as_string):
-        self.hand_as_string = hand_as_string
         self._logger = logging.getLogger(__name__)
+        self.hand_as_string = hand_as_string
+        self.hand_of_cards = []
+        self.hand_value = None
+        self.tiebreaker = None
 
         #_logger = logging.getLogger(__name__)
         #self._logger.debug("PokerHand init: " + hand_as_string)
@@ -20,10 +23,11 @@ class PokerHand(object):
             raise Exception("Hand cannot contain duplicate cards!")
 
         try:
-            hand_of_cards = []
             for card_as_string in hand_as_list:
-                hand_of_cards.append(Card(card_as_string))
-            self.hand_value = self.calc_hand_value(hand_of_cards)
+                self.hand_of_cards.append(Card(card_as_string))
+
+            # Get the hand value
+            self.hand_value = self.calc_hand_value(self.hand_of_cards)
             self._logger.debug("Poker Hand: " + self.hand_as_string + ": " + self.hand_value.name)
         except:
             self._logger.warn("Poker Hand: " + self.hand_as_string + " failed!")
@@ -33,9 +37,19 @@ class PokerHand(object):
     def get_value(self):
         return self.hand_value
 
+    def get_tiebreaker(self):
+        if not self.tiebreaker:
+            # Don't calculate on object creation
+            # since not always needed
+            self.tiebreaker = self.calc_tiebreaker(self.hand_of_cards)
+
+        return self.tiebreaker
+
+
     # Return a PokerHandValue for this hand
+    # hand_of_cards is a local variable here, not manipulated
     def calc_hand_value(self, hand_of_cards):
-        # Sort by value, highest first (ace high)
+        # Sort by value, highest first (ace high), ignoring suit
         hand_of_cards = sorted(hand_of_cards, key=lambda card: card.get_value(), reverse=True)
 
         highest_card = None
@@ -44,6 +58,7 @@ class PokerHand(object):
         previous_card = None
         num_in_sequence = 1
         all_in_sequence = True
+        # TODO use collections.Counter
         card_counter = {}
         for card in hand_of_cards:
             if not highest_card:
@@ -102,6 +117,28 @@ class PokerHand(object):
         else:
             raise Exception("Unexpected card combination!")
 
+    # Returns a list of card objects
+    # sorted in the order in which they should be checked for ties
+    # e.g. input list of Card objects, represented as string
+    #      "8C 5S 7D 2C 8H",
+    # e.g. output of sorted, pair first, then kickers in descending order
+    #      "8C 8H 7D 5S 2C",
+    def calc_tiebreaker(self, hand_of_cards):
+        tiebreaker = []
+        simply_sorted_hand_types = [
+            PokerHandValue.RoyalFlush,
+            PokerHandValue.StraightFlush,
+            PokerHandValue.Flush,
+            PokerHandValue.Straight,
+            PokerHandValue.HighCard
+        ]
+
+        if self.get_value() in simply_sorted_hand_types:
+            # Sort by value, highest first (ace high), ignoring suit
+            tiebreaker = sorted(hand_of_cards, key=lambda card: card.get_value(), reverse=True)
+
+        return tiebreaker
+
     # Compare this hand with another hand
     # First compare hand value (e.g. pair beats high card)
     # If they match, apply more complicated draw rules
@@ -115,5 +152,13 @@ class PokerHand(object):
                 return self.get_value() > other.get_value()
             else:
                 # TODO Hands are the same, evaluate draw rules
+                # https://www.journaldev.com/37089/how-to-compare-two-lists-in-python
+                for mine, theirs in zip(self.get_tiebreaker(), other.get_tiebreaker()):
+                    if mine.get_value() != theirs.get_value():
+                        return mine.get_value() > theirs.get_value()
+
+                # TODO Same value of all five cards
+                # Could sort by suit but that's not the rules
+                # Raise Exception for caller to handle tie?
                 return NotImplemented
         return NotImplemented
