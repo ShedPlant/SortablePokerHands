@@ -12,27 +12,15 @@ class Dealer():
                 if card_value.value != 'a':
                     pack.append(card_value.value + suit.value)
 
-
         while number_of_packs_completed < number_of_packs:
             shuffle(pack)
-            # TODO can this be used or does it impact performance itself?
-            """start_index = 0
+            start_index = 0
             end_index = 5
-                while end_index < 50:
+            while end_index < 50:
                 hands.append(" ".join(pack[start_index:end_index]))
                 start_index = start_index + 5
-                end_index = end_index + 5 """
-            hands.append(" ".join(pack[:5]))
-            hands.append(" ".join(pack[5:10]))
-            hands.append(" ".join(pack[10:15]))
-            hands.append(" ".join(pack[15:20]))
-            hands.append(" ".join(pack[20:25]))
-            hands.append(" ".join(pack[25:30]))
-            hands.append(" ".join(pack[30:35]))
-            hands.append(" ".join(pack[35:40]))
-            hands.append(" ".join(pack[40:45]))
-            hands.append(" ".join(pack[45:50]))
-            # burn the last two cards
+                end_index = end_index + 5
+            # burn the last two cards to make round number
 
             number_of_packs_completed = number_of_packs_completed + 1
         return hands

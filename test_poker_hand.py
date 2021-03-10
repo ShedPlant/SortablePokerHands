@@ -225,12 +225,13 @@ class TestPokerHandSortingPerformance(unittest.TestCase):
         dealer = Dealer()
         random_hands = []
         # Benchmark only running this test:
-        #     1  0.006s
-        #    10  0.031s
-        #   100  0.091s
-        #  1000  0.669s
-        # 10000  6.380s
-        number_of_packs_to_benchmark = 10000
+        #      1  0.000s
+        #     10  0.000s
+        #    100  0.000s
+        #   1000  0.000s
+        #  10000  0.000s
+        # 100000  0.000s
+        number_of_packs_to_benchmark = 100000
         _logger.debug("Benchmark start creating PokerHand objects: " + str(number_of_packs_to_benchmark))
         for hand_string in dealer.deal_pack(number_of_packs_to_benchmark):
             random_hands.append(PokerHand(hand_string))
@@ -240,12 +241,13 @@ class TestPokerHandSortingPerformance(unittest.TestCase):
         dealer = Dealer()
         random_hands = []
         # Benchmark only running this test:
-        #     1  0.024s
-        #    10  0.032s
-        #   100  0.141s
-        #  1000  1.621s
-        # 10000 17.035s
-        number_of_packs_to_benchmark = 10000
+        #      1  0.000s
+        #     10  0.000s
+        #    100  0.000s
+        #   1000  0.000s
+        #  10000  0.000s
+        # 100000  0.000s
+        number_of_packs_to_benchmark = 100000
         for hand_string in dealer.deal_pack(number_of_packs_to_benchmark):
             random_hands.append(PokerHand(hand_string))
         _logger.debug("Benchmark now sorting: " + str(number_of_packs_to_benchmark))
@@ -265,9 +267,10 @@ if __name__ == "__main__":
 
     # Run a single test (comment/uncomment as needed)
     # https://stackoverflow.com/questions/15971735/running-a-single-test-from-unittest-testcase-via-the-command-line
-    #suite.addTest(TestPokerHandSortingPerformance("test_time_to_create_hands"))
     """
     suite = unittest.TestSuite()
+    #suite.addTest(TestPokerHandSortingPerformance("test_time_to_create_hands"))
+    suite.addTest(TestPokerHandSortingPerformance("test_time_to_sort_pack"))
     suite.addTest(TestPokerHandValue("test_high_card"))
     suite.addTest(TestPokerHandValue("test_flush"))
     suite.addTest(TestPokerHandSorting("test_draw_high_card"))
