@@ -1,22 +1,33 @@
 import logging
 import collections
-from card import Card
-from card_value import CardValue
+from card             import Card
+from card_value       import CardValue
 from poker_hand_value import PokerHandValue
 
+# A hand of five cards whose value can be compared against another hand
+# according to Poker rules
+# https://en.wikipedia.org/wiki/List_of_poker_hands
 class PokerHand(object):
     def __repr__(self): return self.hand_as_string
 
+
     def __init__(self, hand_as_string):
         self._logger = logging.getLogger(__name__)
+        # A string representation, never changed after initialisation
         self.hand_as_string = hand_as_string
+        # A list of Card objects
         self.hand_of_cards = []
+
+        # PokerHandValue
         self.hand_value = None
+
+        # Reordered hand_of_cards for tie-breaking situation
         self.tiebreaker = None
 
         #_logger = logging.getLogger(__name__)
         #self._logger.debug("PokerHand init: " + hand_as_string)
 
+        # Input validation
         hand_as_list = hand_as_string.split()
         if len(hand_as_list) != 5:
             raise Exception("Hand must contain 5 cards!")
@@ -31,34 +42,39 @@ class PokerHand(object):
             self.hand_value = self.calc_hand_value(self.hand_of_cards)
             #self._logger.debug("Poker Hand: " + self.hand_as_string + ": " + self.hand_value.name)
         except:
-            self._logger.warn("Poker Hand: " + self.hand_as_string + " failed!")
+            self._logger.warning("Poker Hand: " + self.hand_as_string + " failed!")
             raise Exception("One or more cards invalid!")
 
     
     def get_value(self):
         return self.hand_value
 
+
     def get_tiebreaker(self):
         if not self.tiebreaker:
-            # Don't calculate on object creation
+            # Don't calculate on object creation, for speed
             # since not always needed
             self.tiebreaker = self.calc_tiebreaker(self.hand_of_cards)
 
         return self.tiebreaker
 
 
-    # Return a PokerHandValue for this hand
-    # hand_of_cards is a local variable here, not manipulated
+    # Calculate a hand value (e.g. pair or full house)
+    #
+    # @param hand_of_cards = a list of 5 Card objects
+    # @return a PokerHandValue for hand_of_cards
     def calc_hand_value(self, hand_of_cards):
-        # Sort by value, highest first (ace high), ignoring suit
-        hand_of_cards = sorted(hand_of_cards, key=lambda card: card.get_value(), reverse=True)
-
+        # hand_of_cards is a local variable, this proc doesn't manipulate the object's hand.
         highest_card = None
         first_seen_suit = None
         all_same_suit = True
         previous_card = None
         num_in_sequence = 1
         all_in_sequence = True
+
+        # Sort by value, highest first (ace high), ignoring suit
+        # TODO able to sort Card class natively by using its CardValue
+        hand_of_cards = sorted(hand_of_cards, key=lambda card: card.get_value(), reverse=True)
 
         # https://stackoverflow.com/a/40789844
         card_counter = collections.Counter(getattr(card, 'value') for card in hand_of_cards)
@@ -74,19 +90,22 @@ class PokerHand(object):
                 all_same_suit = False
 
             if previous_card:
-                # Cards are adjacent e.g. 3 and 4
                 if (previous_card.get_value() - card.get_value()) == 1:
+                    # Cards are adjacent e.g. 3 and 4
                     num_in_sequence = num_in_sequence + 1
 
                 # Special case, low ace adjacent to 2
+                # So, can't use a simple boolean 'all_in_sequence', like done with suit
                 if card.get_value() == CardValue.Two and highest_card == CardValue.Ace:
                     num_in_sequence = num_in_sequence + 1
 
             previous_card = card
 
-        if num_in_sequence != 5:
+        if num_in_sequence != len(hand_of_cards):
             all_in_sequence = False
 
+        # Get a list of the number of matching cards (regardless of their face value)
+        # Then can return appropriate PokerHandValue
         matching_card_count = sorted(card_counter.values(), reverse=True)
         if matching_card_count == [2, 1, 1, 1]:
             return PokerHandValue.Pair
@@ -114,20 +133,27 @@ class PokerHand(object):
         else:
             raise Exception("Unexpected card combination!")
 
-    # Returns a list of card objects
-    # sorted in the order in which they should be checked for ties
-    # e.g. input list of Card objects, represented as string
-    #      "8C 5S 7D 2C 8H",
-    # e.g. output of sorted, pair first, then kickers in descending order
-    #      "8C 8H 7D 5S 2C",
+
+    # Calculate tie-breaker sorted list of Cards for comparing two hands with same PokerHandValue
+    # Different PokerHandValue's have different rules about how to calculate draws
+    #
+    # @param hand_of_cards = a list of 5 Card objects
+    #
+    # @return tiebreaker = hand_of_cards re-ordered for easier comparison against another tiebreaker hand
+    # e.g. for following input list of Card objects
+    #      ["8C", "5S", "7D", "2C", "8H"]
+    # e.g. put the pair of 8s first, then kickers in descending order
+    #      ["8C", "8H", "7D", "5S", "2C"]
     def calc_tiebreaker(self, hand_of_cards):
         tiebreaker = []
         kickers = []
 
         if self.get_value().get_draw_sorting_type() == "all":
             # Sort by value, highest first (ace high), ignoring suit
+            # TODO able to sort Card class natively by using its CardValue
             tiebreaker = sorted(hand_of_cards, key=lambda card: card.get_value(), reverse=True)
         elif self.get_value().get_draw_sorting_type() == "one_group":
+            # TODO refactor so same code can handle one/two groups?
             card_counter = collections.Counter(getattr(card, 'value') for card in hand_of_cards)
             most_common = card_counter.most_common(1)[0][0]
             # Insert group, then kickers
@@ -168,8 +194,17 @@ class PokerHand(object):
         return tiebreaker
 
     # Compare this hand with another hand
-    # First compare hand value (e.g. pair beats high card)
-    # If they match, apply more complicated draw rules
+    # First compare hand PokerHandValue, if they match there is a winner.
+    #
+    # If the two hands have same PokerHandValue,
+    # call get_tiebreaker (calc_tiebreaker) to reorder both hands
+    # in such a way both hands can be compared one hand at a time
+    # to find the winner.
+    #
+    # @param self  = this object
+    # @param other = another PokerHand object
+    # @return True if self wins, False if other wins
+    # currently fail if the same
     def __lt__(self, other):
         if self.__class__ is other.__class__:
             if self.get_value() != other.get_value():
@@ -179,7 +214,7 @@ class PokerHand(object):
                 # TODO reorder PokerHandValue?
                 return self.get_value() > other.get_value()
             else:
-                # TODO Hands are the same, evaluate draw rules
+                # Hands are the same, evaluate draw rules
                 # https://www.journaldev.com/37089/how-to-compare-two-lists-in-python
                 for mine, theirs in zip(self.get_tiebreaker(), other.get_tiebreaker()):
                     if mine.get_value() != theirs.get_value():

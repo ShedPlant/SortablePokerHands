@@ -6,27 +6,28 @@ from poker_hand import PokerHand
 from poker_hand_value import PokerHandValue
 
 # TODO some of this could be moved to more specific test classes e.g. draws, invalid
+# but having it in one place is kind of nice
 test_hands = {
     "valid": {
-        "HighCard": "TC 4H 7D KC 2S",
-        "Pair": "KC KH 7D 2C 5S",
-        "TwoPairs": "KC KH 7D 7C 5S",
-        "ThreeOfAKind": "KC KH KD 7C 5S",
-        "Straight": "3C 4H 5D 6C 7S",
+        "HighCard":       "TC 4H 7D KC 2S",
+        "Pair":           "KC KH 7D 2C 5S",
+        "TwoPairs":       "KC KH 7D 7C 5S",
+        "ThreeOfAKind":   "KC KH KD 7C 5S",
+        "Straight":       "3C 4H 5D 6C 7S",
         "StraightLowAce": "3C 4H 5D 2C AS",
-        "Flush": "2C 8C 9C QC KC",
-        "FullHouse": "7C KC KH 7S KS",
-        "FourOfAKind": "KS 6S 6D 6H 6C",
-        "StraightFlush": "5S 6S 2S 3S 4S",
-        "RoyalFlush": "KS AS TS QS JS"
+        "Flush":          "2C 8C 9C QC KC",
+        "FullHouse":      "7C KC KH 7S KS",
+        "FourOfAKind":    "KS 6S 6D 6H 6C",
+        "StraightFlush":  "5S 6S 2S 3S 4S",
+        "RoyalFlush":     "KS AS TS QS JS"
+
     },
     "invalid": {
-        "Empty": "",
-        "TooFewCards": "KS AS TS QS",
+        "Empty":        "",
+        "TooFewCards":  "KS AS TS QS",
         "TooManyCards": "KS AS TS QS JS 1S",
         "InvalidValue": "KS AS TS QS XS",
-        "InvalidSuit": "KS AS TS QS JX",
-        "Duplicates": "KS AS TS QS QS"
+        "InvalidSuit":  "KS AS TS QS JX"
     },
     "draws": {
         "HighCard": {
@@ -55,13 +56,12 @@ test_hands = {
             "Higher": "5D 6C 7S 8C 9H"
         },
         "Flush": {
-            "Lower":  "2C 8C 9C QC TC",
-            "Middle": "2C 8C 9C QC KC",
-            "Higher": "2C 8C 9C QC AC",
-            "Spades": "2S 8S 9S QS AS",
-            "Hearts": "2H 8H 9H QH AH",
-            "Diamonds": "2D 8D 9D QD AD",
-            "Clubs":  "2C 8C 9C QC AC"
+            "Lower":    "2C 8C 9C QC TC",
+            "Middle":   "2C 8C 9C QC KC",
+            "Higher":   "2C 8C 9C QC AC",
+            "Spades":   "2S 8S 9S QS AS",
+            "Hearts":   "2H 8H 9H QH AH",
+            "Diamonds": "2D 8D 9D QD AD"
         },
         "FullHouse": {
             "Lower":  "5C QC QH 5S QS",
@@ -172,9 +172,8 @@ class TestPokerHandSorting(unittest.TestCase):
         automatically_sorted_hands.sort()
         self.assertEqual(manually_sorted_hands, automatically_sorted_hands)
 
-    # Simplest comparison case
-    #@unittest.skip("Might be useful for debugging but implicit in test_all_hand_types_sorted")
-    #@unittest.skip("Disable for now")
+    # Simple comparison case
+    # although implicit in test_all_hands_types_sorted
     def test_pair_beats_high_card(self):
         # pylint: disable=maybe-no-member
         self.shuffleAndConfirmHandsSorted([
@@ -182,7 +181,6 @@ class TestPokerHandSorting(unittest.TestCase):
             test_hands["valid"][PokerHandValue.HighCard.name]
         ] )
 
-    #@unittest.skip("Disable for now")
     def test_all_hand_types_sorted(self):
         # pylint: disable=maybe-no-member
         self.shuffleAndConfirmHandsSorted([
@@ -211,23 +209,18 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_draw_pair(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Pair)
 
-    #@unittest.skip("Disable for now")
     def test_draw_two_pairs(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.TwoPairs)
 
-    #@unittest.skip("Disable for now")
     def test_draw_three_of_a_kind(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.ThreeOfAKind)
 
-    #@unittest.skip("Disable for now")
     def test_draw_straight(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Straight)
 
-    #@unittest.skip("Disable for now")
     def test_draw_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Flush)
 
-    @unittest.skip("Disable for now")
     @unittest.expectedFailure
     def test_draw_same(self):
         # pylint: disable=maybe-no-member
@@ -237,27 +230,16 @@ class TestPokerHandSorting(unittest.TestCase):
             test_hands["draws"][PokerHandValue.Flush.name]["Diamonds"],
             test_hands["draws"][PokerHandValue.Flush.name]["Clubs"]
         ] )
+        # By definition, two royal flush hands have same value
 
-    #@unittest.skip("Disable for now")
     def test_draw_full_house(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.FullHouse)
 
-    #@unittest.skip("Disable for now")
     def test_draw_four_of_a_kind(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.FourOfAKind)
 
-    #@unittest.skip("Disable for now")
     def test_draw_straight_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.StraightFlush)
-
-    # By definition, two royal flush hands have same value
-    # Undefined sorting
-
-
-    # TODO sorting tests to resolve complex draws
-    # (e.g. two hands have two pair with same higher card)
-    
-    # TODO Kickers
 
 if __name__ == "__main__":
     _logger = logging.getLogger(__name__)
@@ -265,6 +247,6 @@ if __name__ == "__main__":
         level = logging.DEBUG,
         format = '%(asctime)-15s - %(levelname)s - %(message)s'
     )
-    _logger.info("Sortable Poker Hands")
+    _logger.info("Sortable Poker Hands Tests")
     _logger.info("Author: Ed Plant")
     unittest.main()
