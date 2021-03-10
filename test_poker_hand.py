@@ -226,21 +226,33 @@ class TestPokerHandSorting(unittest.TestCase):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.StraightFlush)
 
 class TestPokerHandSortingPerformance(unittest.TestCase):
-    def test_time_to_sort_pack(self):
+    def test_time_to_create_hands(self):
         dealer = Dealer()
         random_hands = []
         # Benchmark only running this test:
-        #     1  0.002s
-        #    10  0.024s
-        #   100  0.157s
-        #  1000  1.579s
-        # 10000 17.424s
-        number_of_packs_to_benchmark = 1000
+        #     1  0.006s
+        #    10  0.031s
+        #   100  0.091s
+        #  1000  0.669s
+        # 10000  6.380s
+        number_of_packs_to_benchmark = 10000
         _logger.debug("Benchmark start creating PokerHand objects: " + str(number_of_packs_to_benchmark))
         for hand_string in dealer.deal_pack(number_of_packs_to_benchmark):
             random_hands.append(PokerHand(hand_string))
         _logger.debug("Benchmark end creating PokerHand objects: " + str(number_of_packs_to_benchmark))
 
+    def test_time_to_sort_pack(self):
+        dealer = Dealer()
+        random_hands = []
+        # Benchmark only running this test:
+        #     1  0.024s
+        #    10  0.032s
+        #   100  0.141s
+        #  1000  1.708s
+        # 10000 17.707s
+        number_of_packs_to_benchmark = 10000
+        for hand_string in dealer.deal_pack(number_of_packs_to_benchmark):
+            random_hands.append(PokerHand(hand_string))
         _logger.debug("Benchmark now sorting: " + str(number_of_packs_to_benchmark))
         random_hands.sort()
         _logger.debug("Benchmark end sorting: " + str(number_of_packs_to_benchmark))
@@ -259,6 +271,7 @@ if __name__ == "__main__":
     # Run a single test (comment/uncomment as needed)
     # https://stackoverflow.com/questions/15971735/running-a-single-test-from-unittest-testcase-via-the-command-line
     suite = unittest.TestSuite()
+    #suite.addTest(TestPokerHandSortingPerformance("test_time_to_create_hands"))
     suite.addTest(TestPokerHandSortingPerformance("test_time_to_sort_pack"))
     runner = unittest.TextTestRunner()
     runner.run(suite)
