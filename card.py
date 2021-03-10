@@ -1,13 +1,8 @@
-import logging
-
 from card_value import CardValue
 from card_suit  import CardSuit
 
 class Card(object):
     def __init__(self, cardStr):
-        _logger = logging.getLogger(__name__)
-        #_logger.debug("Card init: " + cardStr)
-
         if len(cardStr) != 2:
             raise Exception(cardStr + " is not a valid card!")
 
