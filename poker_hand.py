@@ -8,7 +8,6 @@ class PokerHand(object):
 
     def __init__(self, handStr):
         self.handStr = handStr
-        self.handOfCards = []
         self._logger = logging.getLogger(__name__)
 
         #_logger = logging.getLogger(__name__)
@@ -21,9 +20,10 @@ class PokerHand(object):
             raise Exception("Hand cannot contain duplicate cards!")
 
         try:
+            hand_of_cards = []
             for cardStr in handStrList:
-                self.handOfCards.append(Card(cardStr))
-            self.set_hand_value()
+                hand_of_cards.append(Card(cardStr))
+            self.hand_value = self.calc_hand_value(hand_of_cards)
         except:
             raise Exception("One or more cards invalid!")
 
@@ -31,7 +31,7 @@ class PokerHand(object):
     
     def describe(self):
         desc = "Poker Hand: " + self.handStr + ": " + self.hand_value.name
-        #for card in self.handOfCards:
+        #for card in self.hand_of_cards:
             #desc += "\n - "
             #desc += card.describe()
         #desc += "\nValue: " + self.hand_value.name
@@ -40,42 +40,22 @@ class PokerHand(object):
     def get_value(self):
         return self.hand_value
 
-    def get_highest_card(self):
-        return self.highest_card
-
-    def __lt__(self, other):
-        if self.__class__ is other.__class__:
-            if self.get_value() != other.get_value():
-                # Compare by hand value
-                # PokerHandValue ordered lower to higher
-                # but sort better hands first, confusingly less than
-                # TODO reorder PokerHandValue?
-                return self.get_value() > other.get_value()
-            else:
-                # Hands are the same, evaluate draw rules
-                if self.get_value() == PokerHandValue.HighCard:
-                    # CardValue ordered lower to higher
-                    return self.get_highest_card() > other.get_highest_card()
-                else:
-                    # TODO other comparisons e.g. which pair is higher
-                    return NotImplemented
-        return NotImplemented
-
-    def set_hand_value(self):
+    # Return a PokerHandValue for this hand
+    def calc_hand_value(self, hand_of_cards):
         # Sort by value, highest first (ace high)
-        self.handOfCards = sorted(self.handOfCards, key=lambda card: card.get_value(), reverse=True)
+        hand_of_cards = sorted(hand_of_cards, key=lambda card: card.get_value(), reverse=True)
 
-        self.highest_card = None
+        highest_card = None
         first_seen_suit = None
         all_same_suit = True
         previous_card = None
         num_in_sequence = 1
         all_in_sequence = True
         cardCounter = {}
-        for card in self.handOfCards:
-            if not self.highest_card:
+        for card in hand_of_cards:
+            if not highest_card:
                 # List is already sorted, effectively just get the first card
-                self.highest_card = card.get_value()
+                highest_card = card.get_value()
             if not first_seen_suit:
                 first_seen_suit = card.get_suit()
 
@@ -94,7 +74,7 @@ class PokerHand(object):
                     num_in_sequence = num_in_sequence + 1
 
                 # Special case, low ace adjacent to 2
-                if card.get_value() == CardValue.Two and self.highest_card == CardValue.Ace:
+                if card.get_value() == CardValue.Two and highest_card == CardValue.Ace:
                     num_in_sequence = num_in_sequence + 1
 
             previous_card = card
@@ -104,27 +84,43 @@ class PokerHand(object):
 
         matching_card_count = sorted(cardCounter.values(), reverse=True)
         if matching_card_count == [2, 1, 1, 1]:
-            self.hand_value = PokerHandValue.Pair
+            return PokerHandValue.Pair
         elif matching_card_count == [2, 2, 1]:
-            self.hand_value = PokerHandValue.TwoPairs
+            return PokerHandValue.TwoPairs
         elif matching_card_count == [3, 1, 1]:
-            self.hand_value = PokerHandValue.ThreeOfAKind
+            return PokerHandValue.ThreeOfAKind
         elif matching_card_count == [4, 1]:
-            self.hand_value = PokerHandValue.FourOfAKind
+            return PokerHandValue.FourOfAKind
         elif matching_card_count == [3, 2]:
-            self.hand_value = PokerHandValue.FullHouse
+            return PokerHandValue.FullHouse
         elif matching_card_count == [1, 1, 1, 1, 1]:
             if all_same_suit:
                 if all_in_sequence:
-                    if self.highest_card == CardValue.Ace:
-                        self.hand_value = PokerHandValue.RoyalFlush
+                    if highest_card == CardValue.Ace:
+                        return PokerHandValue.RoyalFlush
                     else:
-                        self.hand_value = PokerHandValue.StraightFlush
+                        return PokerHandValue.StraightFlush
                 else:
-                    self.hand_value = PokerHandValue.Flush
+                    return PokerHandValue.Flush
             elif all_in_sequence:
-                self.hand_value = PokerHandValue.Straight
+                return PokerHandValue.Straight
             else:
-                self.hand_value = PokerHandValue.HighCard
+                return PokerHandValue.HighCard
         else:
             raise Exception("Unexpected card combination!")
+
+    # Compare this hand with another hand
+    # First compare hand value (e.g. pair beats high card)
+    # If they match, apply more complicated draw rules
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            if self.get_value() != other.get_value():
+                # Compare by hand value
+                # PokerHandValue ordered lower to higher
+                # but sort better hands first, confusingly less than
+                # TODO reorder PokerHandValue?
+                return self.get_value() > other.get_value()
+            else:
+                # TODO Hands are the same, evaluate draw rules
+                return NotImplemented
+        return NotImplemented
