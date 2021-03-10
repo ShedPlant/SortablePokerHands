@@ -238,7 +238,7 @@ class TestPokerHandSorting(unittest.TestCase):
             test_hands["draws"][PokerHandValue.Flush.name]["Clubs"]
         ] )
 
-    @unittest.skip("Disable for now")
+    #@unittest.skip("Disable for now")
     def test_draw_full_house(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.FullHouse)
 
