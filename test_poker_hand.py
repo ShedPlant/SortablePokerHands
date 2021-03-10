@@ -29,9 +29,51 @@ test_hands = {
         "Duplicates": "KS AS TS QS QS"
     },
     "draws": {
-        "HighCardLower": "TC 4H 7D QC 2S",
-        "HighCardMiddle": "TC 4H 7D KC 2S",
-        "HighCardHigher": "TC 4H 7D AC 2S"
+        "HighCard": {
+            "Lower":  "TC 4H 7D KC 2S",
+            "Middle": "JC 4H 7D KC 2S",
+            "Higher": "TC 4H 7D AC 2S"
+        },
+        "Pair": {
+            "Lower":  "3C 3H 7D 2C 5S",
+            "Middle": "8C 8H 7D 2C 5S",
+            "Higher": "KC KH 7D 2C 5S"
+        },
+        "TwoPairs": {
+            "Lower":  "QC QH 6D 6C 5S",
+            "Middle": "QC QH 7D 7C 5S",
+            "Higher": "KC KH 7D 7C 5S"
+        },
+        "ThreeOfAKind": {
+            "Lower":  "JC JH JD 7C 5S",
+            "Middle": "QC QH QD 7C 5S",
+            "Higher": "KC KH KD 7C 5S"
+        },
+        "Straight": {
+            "Lower":  "3C 4H 5D 6C 7S",
+            "Middle": "4H 5D 6C 7S 8C",
+            "Higher": "5D 6C 7S 8C 9H"
+        },
+        "Flush": {
+            "Lower":  "2C 8C 9C QC TC",
+            "Middle": "2C 8C 9C QC KC",
+            "Higher": "2C 8C 9C QC KC"
+        },
+        "FullHouse": {
+            "Lower":  "5C QC QH 5S QS",
+            "Middle": "5C KC KH 5S KS",
+            "Higher": "7C KC KH 7S KS"
+        },
+        "FourOfAKind": {
+            "Lower":  "KS 4S 4D 4H 4C",
+            "Middle": "KS 5S 5D 5H 5C",
+            "Higher": "KS 6S 6D 6H 6C"
+        },
+        "StraightFlush": {
+            "Lower":  "5S 6S 2S 3S 4S",
+            "Middle": "5S 6S 3S 4S 7S",
+            "Higher": "5S 8S 6S 4S 7S"
+        }
     }
 }
 
@@ -146,12 +188,49 @@ class TestPokerHandSorting(unittest.TestCase):
             test_hands["valid"][PokerHandValue.HighCard.name]
         ] )
 
-    def test_draw_high_card(self):
+    def shuffleAndConfirmDrawSorted(self,poker_hand_value):
         self.shuffleAndConfirmHandsSorted([
-            test_hands["draws"]["HighCardHigher"],
-            test_hands["draws"]["HighCardMiddle"],
-            test_hands["draws"]["HighCardLower"]
+            test_hands["draws"][poker_hand_value.name]["Higher"],
+            test_hands["draws"][poker_hand_value.name]["Middle"],
+            test_hands["draws"][poker_hand_value.name]["Lower"]
         ] )
+
+    def test_draw_high_card(self):
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.HighCard)
+
+    @unittest.expectedFailure
+    def test_draw_pair(self):
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.Pair)
+
+    @unittest.expectedFailure
+    def test_draw_two_pairs(self):
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.TwoPairs)
+
+    @unittest.expectedFailure
+    def test_draw_three_of_a_kind(self):
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.ThreeOfAKind)
+
+    @unittest.expectedFailure
+    def test_draw_straight(self):
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.Straight)
+
+    @unittest.expectedFailure
+    def test_draw_flush(self):
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.Flush)
+
+    @unittest.expectedFailure
+    def test_draw_full_house(self):
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.FullHouse)
+
+    @unittest.expectedFailure
+    def test_draw_four_of_a_kind(self):
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.FourOfAKind)
+
+    @unittest.expectedFailure
+    def test_draw_straight_flush(self):
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.StraightFlush)
+
+    # By definition, two royal flush hands have same value
 
 
     # TODO sorting tests to resolve complex draws
