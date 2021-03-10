@@ -51,8 +51,8 @@ test_hands = {
             "Higher": "KC KH KD 7C 5S"
         },
         "Straight": {
-            "Lower":  "2C 3C AC 4C 5C",
-            "Middle": "2D 6D 3D 4D 5D",
+            "Lower":  "2C 3C AD 4H 5S",
+            "Middle": "2D 6D 3D 4H 5S",
             "Higher": "5D 6C 7S 8C 9H"
         },
         "Flush": {
@@ -74,8 +74,8 @@ test_hands = {
             "Higher": "KS 6S 6D 6H 6C"
         },
         "StraightFlush": {
-            "Lower":  "5S 6S 2S 3S 4S",
-            "Middle": "5S 6S 3S 4S 7S",
+            "Lower":  "2C 3C AC 4C 5C",
+            "Middle": "2D 6D 3D 4D 5D",
             "Higher": "5S 8S 6S 4S 7S"
         }
     }
@@ -164,7 +164,7 @@ class TestPokerHandSorting(unittest.TestCase):
         automatically_sorted_hands = manually_sorted_hands.copy()
 
         number_of_hands = len(automatically_sorted_hands)
-        if number_of_hands == 2:
+        if number_of_hands < 10:
             automatically_sorted_hands.reverse()
         else:
             shuffle(automatically_sorted_hands)
@@ -217,6 +217,12 @@ class TestPokerHandSorting(unittest.TestCase):
 
     def test_draw_straight(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Straight)
+        """
+        self.shuffleAndConfirmHandsSorted([
+            test_hands["draws"][PokerHandValue.Straight.name]["Middle"],
+            test_hands["draws"][PokerHandValue.Straight.name]["Lower"]
+        ] )
+        """
 
     def test_draw_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Flush)
@@ -250,11 +256,13 @@ if __name__ == "__main__":
     )
     _logger.info("Sortable Poker Hands Tests")
     _logger.info("Author: Ed Plant")
-    #unittest.main()
+    unittest.main()
 
     # Run a single test (comment/uncomment as needed)
     # https://stackoverflow.com/questions/15971735/running-a-single-test-from-unittest-testcase-via-the-command-line
+    """
     suite = unittest.TestSuite()
     suite.addTest(TestPokerHandSorting("test_draw_straight"))
     runner = unittest.TextTestRunner()
     runner.run(suite)
+    """

@@ -74,6 +74,7 @@ class PokerHand(object):
         previous_card = None
         num_in_sequence = 1
         all_in_sequence = True
+        low_ace_adjusted = False
 
         # Sort by value, highest first (ace high), ignoring suit
         # TODO able to sort Card class natively by using its CardValue
@@ -99,8 +100,10 @@ class PokerHand(object):
 
                 # Special case, low ace adjacent to 2
                 # So, can't use a simple boolean 'all_in_sequence', like done with suit
-                if card.get_value() == CardValue.Two and highest_card == CardValue.Ace:
+                if (not low_ace_adjusted and
+                    card.get_value() == CardValue.Two and highest_card == CardValue.Ace):
                     num_in_sequence = num_in_sequence + 1
+                    low_ace_adjusted = True
 
             previous_card = card
 
@@ -123,7 +126,7 @@ class PokerHand(object):
         elif matching_card_count == [1, 1, 1, 1, 1]:
             if all_same_suit:
                 if all_in_sequence:
-                    if highest_card == CardValue.Ace:
+                    if not low_ace_adjusted and highest_card == CardValue.Ace:
                         return PokerHandValue.RoyalFlush
                     else:
                         return PokerHandValue.StraightFlush
@@ -161,8 +164,10 @@ class PokerHand(object):
 
             if self.get_value().get_draw_sorting_type() == "high_to_low_ace_can_be_low":
                 if tiebreaker[0].get_value() - tiebreaker[1].get_value() != 1:
-                    tiebreaker.append(tiebreaker.pop(0))
-
+                    low_ace_suit = tiebreaker[0].get_suit()
+                    low_ace_string = "a" + low_ace_suit.value
+                    tiebreaker.pop(0)
+                    tiebreaker.append(Card(low_ace_string))
         elif self.get_value().get_draw_sorting_type() == "one_group_then_kickers":
             # TODO refactor so same code can handle one/two groups?
             card_counter = collections.Counter(getattr(card, 'value') for card in hand_of_cards)
