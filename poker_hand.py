@@ -24,10 +24,11 @@ class PokerHand(object):
             for cardStr in handStrList:
                 hand_of_cards.append(Card(cardStr))
             self.hand_value = self.calc_hand_value(hand_of_cards)
+            self._logger.debug("Poker Hand: " + self.handStr + ": " + self.hand_value.name)
         except:
+            self._logger.warn("Poker Hand: " + self.handStr + " failed!")
             raise Exception("One or more cards invalid!")
 
-        self._logger.debug("Poker Hand: " + self.handStr + ": " + self.hand_value.name)
     
     def get_value(self):
         return self.hand_value
