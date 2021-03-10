@@ -249,8 +249,8 @@ class TestPokerHandSortingPerformance(unittest.TestCase):
         #    10  0.032s
         #   100  0.141s
         #  1000  1.708s
-        # 10000 17.707s
-        number_of_packs_to_benchmark = 10000
+        # 10000 17.442s
+        number_of_packs_to_benchmark = 1000
         for hand_string in dealer.deal_pack(number_of_packs_to_benchmark):
             random_hands.append(PokerHand(hand_string))
         _logger.debug("Benchmark now sorting: " + str(number_of_packs_to_benchmark))
