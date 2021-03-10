@@ -150,8 +150,8 @@ class PokerHand(object):
     # @return tiebreaker = hand_of_cards re-ordered for easier comparison against another tiebreaker hand
     # e.g. for following input list of Card objects
     #      ["8C", "5S", "7D", "2C", "8H"]
-    # e.g. put the pair of 8s first, then kickers in descending order
-    #      ["8C", "8H", "7D", "5S", "2C"]
+    # e.g. put the 8s first to represent the pair (don't need the second), then kickers in descending order
+    #      ["8C", "7D", "5S", "2C"]
     def calc_tiebreaker(self, hand_of_cards):
         tiebreaker = []
         kickers = []
