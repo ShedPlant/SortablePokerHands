@@ -250,4 +250,11 @@ if __name__ == "__main__":
     )
     _logger.info("Sortable Poker Hands Tests")
     _logger.info("Author: Ed Plant")
-    unittest.main()
+    #unittest.main()
+
+    # Run a single test (comment/uncomment as needed)
+    # https://stackoverflow.com/questions/15971735/running-a-single-test-from-unittest-testcase-via-the-command-line
+    suite = unittest.TestSuite()
+    suite.addTest(TestPokerHandSorting("test_draw_straight"))
+    runner = unittest.TextTestRunner()
+    runner.run(suite)
