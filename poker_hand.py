@@ -56,6 +56,9 @@ class PokerHand(object):
                 if self.get_value() == PokerHandValue.HighCard:
                     # CardValue ordered lower to higher
                     return self.get_highest_card() > other.get_highest_card()
+                else:
+                    # TODO other comparisons e.g. which pair is higher
+                    return NotImplemented
         return NotImplemented
 
     def set_hand_value(self):

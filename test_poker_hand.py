@@ -5,6 +5,7 @@ from random import shuffle
 from poker_hand import PokerHand
 from poker_hand_value import PokerHandValue
 
+# TODO some of this could be moved to more specific test classes e.g. draws, invalid
 test_hands = {
     "valid": {
         "HighCard": "TC 4H 7D KC 2S",
@@ -28,12 +29,13 @@ test_hands = {
         "Duplicates": "KS AS TS QS QS"
     },
     "draws": {
-        "HighCardLower": "TC 4H 7D KC 2S",
-        "HighCardHigher": "TC 4H 7D AC 2S",
+        "HighCardLower": "TC 4H 7D QC 2S",
+        "HighCardMiddle": "TC 4H 7D KC 2S",
+        "HighCardHigher": "TC 4H 7D AC 2S"
     }
 }
 
-@unittest.skip("Disable for now")
+#@unittest.skip("Disable for now")
 class TestPokerHandErrorHandling(unittest.TestCase):
     # TODO use more specific, perhaps custom, exceptions?
 
@@ -61,7 +63,7 @@ class TestPokerHandErrorHandling(unittest.TestCase):
         with self.assertRaises(Exception):
             PokerHand(test_hands["invalid"]["Duplicates"])
 
-@unittest.skip("Disable for now")
+#@unittest.skip("Disable for now")
 class TestPokerHandValue(unittest.TestCase):
     def assertHandValuedCorrectly(self, poker_hand_value):
         hand_string = test_hands["valid"][poker_hand_value.name]
@@ -108,51 +110,49 @@ class TestPokerHandValue(unittest.TestCase):
         self.assertHandValuedCorrectly(PokerHandValue.HighCard)
 
 class TestPokerHandSorting(unittest.TestCase):
-    # Simple case
+    def shuffleAndConfirmHandsSorted(self, list_of_hand_strings):
+        manually_sorted_hands = []
+        for hand_string in list_of_hand_strings:
+            manually_sorted_hands.append(PokerHand(hand_string))
+        automatically_sorted_hands = manually_sorted_hands.copy()
+
+        number_of_hands = len(automatically_sorted_hands)
+        if number_of_hands == 2:
+            automatically_sorted_hands.reverse()
+        else:
+            shuffle(automatically_sorted_hands)
+
+        automatically_sorted_hands.sort()
+        self.assertEqual(manually_sorted_hands, automatically_sorted_hands)
+
+    @unittest.skip("Might be useful for debugging but implicit in test_all_hand_types_sortedf")
     def test_pair_beats_high_card(self):
-        manually_sorted_hands = []
-        manually_sorted_hands.append(PokerHand(test_hands["valid"][PokerHandValue.Pair.name]))
-        manually_sorted_hands.append(PokerHand(test_hands["valid"][PokerHandValue.HighCard.name]))
+        self.shuffleAndConfirmHandsSorted([
+            test_hands["valid"][PokerHandValue.Pair.name],
+            test_hands["valid"][PokerHandValue.HighCard.name]
+        ] )
 
-        automatically_sorted_hands = manually_sorted_hands.copy()
-        # Shuffle before sorting
-        automatically_sorted_hands.reverse()
-        # Back to original now
-        automatically_sorted_hands.sort()
-        self.assertEqual(manually_sorted_hands, automatically_sorted_hands)
+    def test_all_hand_types_sorted(self):
+        self.shuffleAndConfirmHandsSorted([
+            test_hands["valid"][PokerHandValue.RoyalFlush.name],
+            test_hands["valid"][PokerHandValue.StraightFlush.name],
+            test_hands["valid"][PokerHandValue.FourOfAKind.name],
+            test_hands["valid"][PokerHandValue.FullHouse.name],
+            test_hands["valid"][PokerHandValue.Flush.name],
+            test_hands["valid"][PokerHandValue.Straight.name],
+            test_hands["valid"][PokerHandValue.ThreeOfAKind.name],
+            test_hands["valid"][PokerHandValue.TwoPairs.name],
+            test_hands["valid"][PokerHandValue.Pair.name],
+            test_hands["valid"][PokerHandValue.HighCard.name]
+        ] )
 
-    #@unittest.skip("Disable for now")
-    def test_sort_all_hands(self):
-        manually_sorted_hands = []
-        manually_sorted_hands.append(PokerHand(test_hands["valid"][PokerHandValue.RoyalFlush.name]))
-        manually_sorted_hands.append(PokerHand(test_hands["valid"][PokerHandValue.StraightFlush.name]))
-        manually_sorted_hands.append(PokerHand(test_hands["valid"][PokerHandValue.FourOfAKind.name]))
-        manually_sorted_hands.append(PokerHand(test_hands["valid"][PokerHandValue.FullHouse.name]))
-        manually_sorted_hands.append(PokerHand(test_hands["valid"][PokerHandValue.Flush.name]))
-        manually_sorted_hands.append(PokerHand(test_hands["valid"][PokerHandValue.Straight.name]))
-        manually_sorted_hands.append(PokerHand(test_hands["valid"][PokerHandValue.ThreeOfAKind.name]))
-        manually_sorted_hands.append(PokerHand(test_hands["valid"][PokerHandValue.TwoPairs.name]))
-        manually_sorted_hands.append(PokerHand(test_hands["valid"][PokerHandValue.Pair.name]))
-        manually_sorted_hands.append(PokerHand(test_hands["valid"][PokerHandValue.HighCard.name]))
-
-        automatically_sorted_hands = manually_sorted_hands.copy()
-        shuffle(automatically_sorted_hands)
-        automatically_sorted_hands.sort()
-        self.assertEqual(manually_sorted_hands, automatically_sorted_hands)
-
-    #@unittest.skip("Disable for now")
     def test_draw_high_card(self):
-        manually_sorted_hands = []
-        manually_sorted_hands.append(PokerHand(test_hands["draws"]["HighCardHigher"]))
-        manually_sorted_hands.append(PokerHand(test_hands["draws"]["HighCardLower"]))
+        self.shuffleAndConfirmHandsSorted([
+            test_hands["draws"]["HighCardHigher"],
+            test_hands["draws"]["HighCardMiddle"],
+            test_hands["draws"]["HighCardLower"]
+        ] )
 
-        automatically_sorted_hands = manually_sorted_hands.copy()
-        # Shuffle before sorting
-        automatically_sorted_hands.reverse()
-        # Back to original now
-        automatically_sorted_hands.sort()
-
-        self.assertEqual(manually_sorted_hands, automatically_sorted_hands)
 
     # TODO sorting tests to resolve complex draws
     # (e.g. two hands have two pair with same higher card)
