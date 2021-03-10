@@ -81,7 +81,7 @@ class TestPokerHandErrorHandling(unittest.TestCase):
         with self.assertRaises(Exception):
             PokerHand("KS AS TS QS JX")
 
-    # "Disabled exception to comply with codewars validation"
+    # Disabled exception to comply with codewars validation
     @unittest.expectedFailure
     def test_no_duplicates_allowed(self):
         with self.assertRaises(Exception):
