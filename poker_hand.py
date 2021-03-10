@@ -133,6 +133,15 @@ class PokerHand(object):
         if self.get_value() in simply_sorted_hand_types:
             # Sort by value, highest first (ace high), ignoring suit
             tiebreaker = sorted(hand_of_cards, key=lambda card: card.get_value(), reverse=True)
+        elif self.get_value() == PokerHandValue.Pair:
+            card_counter = collections.Counter(getattr(card, 'value') for card in hand_of_cards)
+            most_common = card_counter.most_common(1)[0][0]
+            for card in hand_of_cards:
+                if card.get_value() == most_common:
+                    tiebreaker.append(card)
+            for card in hand_of_cards:
+                if card.get_value() != most_common:
+                    tiebreaker.append(card)
 
         return tiebreaker
 
@@ -155,7 +164,7 @@ class PokerHand(object):
                         return mine.get_value() > theirs.get_value()
 
                 # TODO Same value of all five cards
-                # Could sort by suit but that's not the rules
+                # Could sort by suit but that doesn't affect winner
                 # Raise Exception for caller to handle tie?
                 return NotImplemented
         return NotImplemented
