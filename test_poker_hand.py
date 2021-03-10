@@ -35,8 +35,8 @@ test_hands = {
             "Higher": "TC 4H 7D AC 2S"
         },
         "Pair": {
-            "Lower":  "2C 3C 3H 7D 5S",
-            "Middle": "5S 8C 8H 7D 2C",
+            "Lower":  "KC 8C 8H 7D 5S",
+            "Middle": "5S 8C 8H 7D AC",
             "Higher": "KC 7D KH 2C 5S"
         },
         "TwoPairs": {
@@ -69,7 +69,7 @@ test_hands = {
             "Higher": "7C KC KH 7S KS"
         },
         "FourOfAKind": {
-            "Lower":  "KS 4S 4D 4H 4C",
+            "Lower":  "QS 5S 5D 5H 5C",
             "Middle": "KS 5S 5D 5H 5C",
             "Higher": "KS 6S 6D 6H 6C"
         },
@@ -81,7 +81,7 @@ test_hands = {
     }
 }
 
-@unittest.skip("Disable for now")
+#@unittest.skip("Disable for now")
 class TestPokerHandErrorHandling(unittest.TestCase):
     # TODO use more specific, perhaps custom, exceptions?
 
@@ -109,7 +109,7 @@ class TestPokerHandErrorHandling(unittest.TestCase):
         with self.assertRaises(Exception):
             PokerHand(test_hands["invalid"]["Duplicates"])
 
-@unittest.skip("Disable for now")
+#@unittest.skip("Disable for now")
 class TestPokerHandValue(unittest.TestCase):
     def assertHandValuedCorrectly(self, poker_hand_value):
         hand_string = test_hands["valid"][poker_hand_value.name]
@@ -174,14 +174,14 @@ class TestPokerHandSorting(unittest.TestCase):
 
     # Simplest comparison case
     #@unittest.skip("Might be useful for debugging but implicit in test_all_hand_types_sorted")
-    @unittest.skip("Disable for now")
+    #@unittest.skip("Disable for now")
     def test_pair_beats_high_card(self):
         self.shuffleAndConfirmHandsSorted([
             test_hands["valid"][PokerHandValue.Pair.name],
             test_hands["valid"][PokerHandValue.HighCard.name]
         ] )
 
-    @unittest.skip("Disable for now")
+    #@unittest.skip("Disable for now")
     def test_all_hand_types_sorted(self):
         self.shuffleAndConfirmHandsSorted([
             test_hands["valid"][PokerHandValue.RoyalFlush.name],
@@ -206,25 +206,22 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_draw_high_card(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.HighCard)
 
-    #@unittest.expectedFailure
     def test_draw_pair(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Pair)
 
-    @unittest.skip("Disable for now")
-    @unittest.expectedFailure
+    #@unittest.skip("Disable for now")
     def test_draw_two_pairs(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.TwoPairs)
 
-    @unittest.skip("Disable for now")
-    @unittest.expectedFailure
+    #@unittest.skip("Disable for now")
     def test_draw_three_of_a_kind(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.ThreeOfAKind)
 
-    @unittest.skip("Disable for now")
+    #@unittest.skip("Disable for now")
     def test_draw_straight(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Straight)
 
-    @unittest.skip("Disable for now")
+    #@unittest.skip("Disable for now")
     def test_draw_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Flush)
 
@@ -238,14 +235,15 @@ class TestPokerHandSorting(unittest.TestCase):
             test_hands["draws"][PokerHandValue.Flush.name]["Clubs"]
         ] )
 
-    @unittest.expectedFailure
+    @unittest.skip("Disable for now")
     def test_draw_full_house(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.FullHouse)
 
-    @unittest.expectedFailure
+    #@unittest.skip("Disable for now")
     def test_draw_four_of_a_kind(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.FourOfAKind)
 
+    #@unittest.skip("Disable for now")
     def test_draw_straight_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.StraightFlush)
 

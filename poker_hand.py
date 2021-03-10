@@ -29,7 +29,7 @@ class PokerHand(object):
 
             # Get the hand value
             self.hand_value = self.calc_hand_value(self.hand_of_cards)
-            self._logger.debug("Poker Hand: " + self.hand_as_string + ": " + self.hand_value.name)
+            #self._logger.debug("Poker Hand: " + self.hand_as_string + ": " + self.hand_value.name)
         except:
             self._logger.warn("Poker Hand: " + self.hand_as_string + " failed!")
             raise Exception("One or more cards invalid!")
@@ -122,26 +122,48 @@ class PokerHand(object):
     #      "8C 8H 7D 5S 2C",
     def calc_tiebreaker(self, hand_of_cards):
         tiebreaker = []
-        simply_sorted_hand_types = [
-            PokerHandValue.RoyalFlush,
-            PokerHandValue.StraightFlush,
-            PokerHandValue.Flush,
-            PokerHandValue.Straight,
-            PokerHandValue.HighCard
-        ]
+        kickers = []
 
-        if self.get_value() in simply_sorted_hand_types:
+        if self.get_value().get_draw_sorting_type() == "all":
             # Sort by value, highest first (ace high), ignoring suit
             tiebreaker = sorted(hand_of_cards, key=lambda card: card.get_value(), reverse=True)
-        elif self.get_value() == PokerHandValue.Pair:
+        elif self.get_value().get_draw_sorting_type() == "one_group":
             card_counter = collections.Counter(getattr(card, 'value') for card in hand_of_cards)
             most_common = card_counter.most_common(1)[0][0]
+            # Insert group, then kickers
             for card in hand_of_cards:
                 if card.get_value() == most_common:
                     tiebreaker.append(card)
             for card in hand_of_cards:
                 if card.get_value() != most_common:
+                    kickers.append(card)
+            kickers = sorted(kickers, key=lambda card: card.get_value(), reverse=True)
+            tiebreaker = tiebreaker + kickers
+        elif self.get_value().get_draw_sorting_type() == "two_groups":
+            card_counter = collections.Counter(getattr(card, 'value') for card in hand_of_cards)
+            most_common = card_counter.most_common(2)
+            first_group = most_common[0][0]
+            second_group = most_common[1][0]
+
+            # Collection returns pairs in order first seen,
+            # but highest group should go first
+            if first_group < second_group:
+                first_group, second_group = second_group, first_group
+
+            # Insert highest group, then second group, then kickers
+            for card in hand_of_cards:
+                if card.get_value() == first_group:
                     tiebreaker.append(card)
+            for card in hand_of_cards:
+                if card.get_value() == second_group:
+                    tiebreaker.append(card)
+            for card in hand_of_cards:
+                if card.get_value() not in [first_group, second_group]:
+                    kickers.append(card)
+            kickers = sorted(kickers, key=lambda card: card.get_value(), reverse=True)
+            tiebreaker = tiebreaker + kickers
+        else:
+            return NotImplemented
 
         return tiebreaker
 

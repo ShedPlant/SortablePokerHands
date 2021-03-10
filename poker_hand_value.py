@@ -11,3 +11,29 @@ class PokerHandValue(OrderedEnum):
     FourOfAKind   =  "8"
     StraightFlush =  "9"
     RoyalFlush    = "10"
+
+    def get_draw_sorting_type(self):
+        simply_sorted_hand_types = [
+            PokerHandValue.RoyalFlush,
+            PokerHandValue.StraightFlush,
+            PokerHandValue.Flush,
+            PokerHandValue.Straight,
+            PokerHandValue.HighCard
+        ]
+        one_group_hand_types = [
+            PokerHandValue.FourOfAKind,
+            PokerHandValue.ThreeOfAKind,
+            PokerHandValue.Pair
+        ]
+        two_group_hand_types = [
+            PokerHandValue.FullHouse,
+            PokerHandValue.TwoPairs
+        ]
+        if self in simply_sorted_hand_types:
+            return "all"
+        elif self in one_group_hand_types:
+            return "one_group"
+        elif self in two_group_hand_types:
+            return "two_groups"
+        else:
+            NotImplemented
