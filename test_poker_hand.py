@@ -38,7 +38,8 @@ test_hands = {
         "Higher":   "2C 8C 9C QC AC",
         "Spades":   "2S 8S 9S QS AS",
         "Hearts":   "2H 8H 9H QH AH",
-        "Diamonds": "2D 8D 9D QD AD"
+        "Diamonds": "2D 8D 9D QD AD",
+        "Clubs":    "3C 8C TC QC AC"
     },
     "FullHouse": {
         "Lower":  "5C QC QH 5S QS",
