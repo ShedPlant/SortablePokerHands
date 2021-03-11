@@ -1,4 +1,4 @@
-# ***REMOVED*** Python Software Engineering Challenge
+# Python Software Engineering Challenge
 ## Ed Plant, March 2021
 
 # Assignment
