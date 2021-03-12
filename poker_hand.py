@@ -61,21 +61,7 @@ class PokerHand(object):
         group_counts = list(self.hands_sorted_by_group_value.values())
         first_group_count = group_counts[0]
         second_group_count = group_counts[1]
-        if first_group_count == 2:
-            if second_group_count == 1:
-                self.hand_value = PokerHandValue.Pair
-            elif second_group_count == 2:
-                self.hand_value = PokerHandValue.TwoPairs
-        elif first_group_count == 3:
-            if second_group_count == 1:
-                self.hand_value = PokerHandValue.ThreeOfAKind
-            elif second_group_count == 2:
-                self.hand_value = PokerHandValue.FullHouse
-        elif first_group_count == 4:
-            self.hand_value = PokerHandValue.FourOfAKind
-        elif first_group_count == 1:
-            # TODO move to top of list, this is more common
-
+        if first_group_count == 1:
             if (CardValue.Ace   in self.hands_sorted_by_group_value and
                 CardValue.Two   in self.hands_sorted_by_group_value and
                 CardValue.Three in self.hands_sorted_by_group_value and
@@ -107,6 +93,18 @@ class PokerHand(object):
                 self.hand_value = PokerHandValue.Straight
             else:
                 self.hand_value = PokerHandValue.HighCard
+        elif first_group_count == 2:
+            if second_group_count == 1:
+                self.hand_value = PokerHandValue.Pair
+            elif second_group_count == 2:
+                self.hand_value = PokerHandValue.TwoPairs
+        elif first_group_count == 3:
+            if second_group_count == 1:
+                self.hand_value = PokerHandValue.ThreeOfAKind
+            elif second_group_count == 2:
+                self.hand_value = PokerHandValue.FullHouse
+        elif first_group_count == 4:
+            self.hand_value = PokerHandValue.FourOfAKind
         else:
             raise Exception("Internal error while processing: " + self.hand_as_string)
 
