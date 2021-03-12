@@ -58,23 +58,22 @@ class PokerHand(object):
         #self._logger.debug(self.hands_sorted_by_group_value)
         # {<CardValue.Nine: '9'>: 2, <CardValue.King: 'K'>: 1, <CardValue.Five: '5'>: 1, <CardValue.Three: '3'>: 1}
 
-        # Get a list of the number of matching cards (regardless of their face value)
-        # Then can return appropriate PokerHandValue
-        group_count = list(self.hands_sorted_by_group_value.values())
-        # TODO only the first two groups matter, discard rest
-        # TODO have two layers of if, don't check '2' first group twice for example
-        #self._logger.debug(group_count)
-        if group_count == [2, 1, 1, 1]:
-            self.hand_value = PokerHandValue.Pair
-        elif group_count == [2, 2, 1]:
-            self.hand_value = PokerHandValue.TwoPairs
-        elif group_count == [3, 1, 1]:
-            self.hand_value = PokerHandValue.ThreeOfAKind
-        elif group_count == [4, 1]:
+        group_counts = list(self.hands_sorted_by_group_value.values())
+        first_group_count = group_counts[0]
+        second_group_count = group_counts[1]
+        if first_group_count == 2:
+            if second_group_count == 1:
+                self.hand_value = PokerHandValue.Pair
+            elif second_group_count == 2:
+                self.hand_value = PokerHandValue.TwoPairs
+        elif first_group_count == 3:
+            if second_group_count == 1:
+                self.hand_value = PokerHandValue.ThreeOfAKind
+            elif second_group_count == 2:
+                self.hand_value = PokerHandValue.FullHouse
+        elif first_group_count == 4:
             self.hand_value = PokerHandValue.FourOfAKind
-        elif group_count == [3, 2]:
-            self.hand_value = PokerHandValue.FullHouse
-        elif group_count == [1, 1, 1, 1, 1]:
+        elif first_group_count == 1:
             # TODO move to top of list, this is more common
 
             if (CardValue.Ace   in self.hands_sorted_by_group_value and

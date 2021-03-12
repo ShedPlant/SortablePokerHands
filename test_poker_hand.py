@@ -230,7 +230,7 @@ class TestPokerHandSortingPerformance(unittest.TestCase):
         #  Hands  Times Sorted Time
         #     10            1   0.002s
         #     50          100   0.144s
-        #     50        25000  19.230s, 20.215s
+        #     50        25000  19.364s, 19.661s, 19.032s
         #    100            1   0.028s
         #   1000            1   0.100s
         #  10000            1   0.917s
