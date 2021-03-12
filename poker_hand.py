@@ -46,34 +46,34 @@ class PokerHand(object):
         # Groups with more cards take precedence.
         # If groups of equal size, highest card takes precedence.
         # Achieve this by two sorts in reverse order.
-        self.hands_sorted_by_group_value = collections.Counter(getattr(card, 'value') for card in hand_as_list_of_card)
-        #self._logger.debug(self.hands_sorted_by_group_value)
+        self.hand_sorted_by_group_value = collections.Counter(getattr(card, 'value') for card in hand_as_list_of_card)
+        #self._logger.debug(self.hand_sorted_by_group_value)
         #Counter({<CardValue.Nine: '9'>: 2, <CardValue.Five: '5'>: 1, <CardValue.King: 'K'>: 1, <CardValue.Three: '3'>: 1})
 
-        self.hands_sorted_by_group_value = dict(sorted(self.hands_sorted_by_group_value.items(), key=lambda item: item[0]))
-        #self._logger.debug(self.hands_sorted_by_group_value)
+        self.hand_sorted_by_group_value = dict(sorted(self.hand_sorted_by_group_value.items(), key=lambda item: item[0]))
+        #self._logger.debug(self.hand_sorted_by_group_value)
         # {<CardValue.King: 'K'>: 1, <CardValue.Nine: '9'>: 2, <CardValue.Five: '5'>: 1, <CardValue.Three: '3'>: 1}
 
-        self.hands_sorted_by_group_value = dict(sorted(self.hands_sorted_by_group_value.items(), key=lambda item: item[1], reverse=True))
-        #self._logger.debug(self.hands_sorted_by_group_value)
+        self.hand_sorted_by_group_value = dict(sorted(self.hand_sorted_by_group_value.items(), key=lambda item: item[1], reverse=True))
+        #self._logger.debug(self.hand_sorted_by_group_value)
         # {<CardValue.Nine: '9'>: 2, <CardValue.King: 'K'>: 1, <CardValue.Five: '5'>: 1, <CardValue.Three: '3'>: 1}
 
-        group_counts = list(self.hands_sorted_by_group_value.values())
+        group_counts = list(self.hand_sorted_by_group_value.values())
         first_group_count = group_counts[0]
         second_group_count = group_counts[1]
         if first_group_count == 1:
-            if (CardValue.Ace   in self.hands_sorted_by_group_value and
-                CardValue.Two   in self.hands_sorted_by_group_value and
-                CardValue.Three in self.hands_sorted_by_group_value and
-                CardValue.Four  in self.hands_sorted_by_group_value and
-                CardValue.Five  in self.hands_sorted_by_group_value):
+            if (CardValue.Ace   in self.hand_sorted_by_group_value and
+                CardValue.Two   in self.hand_sorted_by_group_value and
+                CardValue.Three in self.hand_sorted_by_group_value and
+                CardValue.Four  in self.hand_sorted_by_group_value and
+                CardValue.Five  in self.hand_sorted_by_group_value):
                 # Move Ace to Ace Low
                 # This hand combination is the *only* time it's ever used
-                self.hands_sorted_by_group_value[CardValue.AceLow] = self.hands_sorted_by_group_value.pop(CardValue.Ace)
+                self.hand_sorted_by_group_value[CardValue.AceLow] = self.hand_sorted_by_group_value.pop(CardValue.Ace)
                 
             previous_val = None
             straight = True
-            for current_val in self.hands_sorted_by_group_value:
+            for current_val in self.hand_sorted_by_group_value:
                 if previous_val:
                     if previous_val - current_val != -1:
                         straight = False
@@ -109,7 +109,7 @@ class PokerHand(object):
             raise Exception("Internal error while processing: " + self.hand_as_string)
 
         # Save the (possibly manipulated due to low ace rule) list of card values, for comparison
-        self.hand_sorted_for_draw_comparison = list(self.hands_sorted_by_group_value.keys())
+        self.hand_sorted_for_draw_comparison = list(self.hand_sorted_by_group_value.keys())
 
 
 
