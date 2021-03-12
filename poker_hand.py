@@ -50,7 +50,7 @@ class PokerHand(object):
         #self._logger.debug(self.hands_sorted_by_group_value)
         #Counter({<CardValue.Nine: '9'>: 2, <CardValue.Five: '5'>: 1, <CardValue.King: 'K'>: 1, <CardValue.Three: '3'>: 1})
 
-        self.hands_sorted_by_group_value = dict(sorted(self.hands_sorted_by_group_value.items(), key=lambda item: item[0], reverse=True))
+        self.hands_sorted_by_group_value = dict(sorted(self.hands_sorted_by_group_value.items(), key=lambda item: item[0]))
         #self._logger.debug(self.hands_sorted_by_group_value)
         # {<CardValue.King: 'K'>: 1, <CardValue.Nine: '9'>: 2, <CardValue.Five: '5'>: 1, <CardValue.Three: '3'>: 1}
 
@@ -75,7 +75,7 @@ class PokerHand(object):
             straight = True
             for current_val in self.hands_sorted_by_group_value:
                 if previous_val:
-                    if previous_val - current_val != 1:
+                    if previous_val - current_val != -1:
                         straight = False
                         break
 
@@ -108,6 +108,10 @@ class PokerHand(object):
         else:
             raise Exception("Internal error while processing: " + self.hand_as_string)
 
+        # Save the (possibly manipulated due to low ace rule) list of card values, for comparison
+        self.hand_sorted_for_draw_comparison = list(self.hands_sorted_by_group_value.keys())
+
+
 
     # Compare this hand with another hand
     # First compare hand PokerHandValue, if they do not match there is a winner.
@@ -122,16 +126,9 @@ class PokerHand(object):
     def __lt__(self, other):
         if self.__class__ is other.__class__:
             if self.hand_value != other.hand_value:
-                # Compare by hand value
+                # Hands differ
                 return self.hand_value < other.hand_value
             else:
-                # Hands are the same, evaluate draw rules
-                # https://www.journaldev.com/37089/how-to-compare-two-lists-in-python
-                for mine, theirs in zip(self.hands_sorted_by_group_value, other.hands_sorted_by_group_value):
-                    if mine != theirs:
-                        return mine > theirs
-
-                # Same value of all five cards
-                # Stable sorting
-                return False
+                # Hands are the same, compare pre-sorted lists
+                return self.hand_sorted_for_draw_comparison < other.hand_sorted_for_draw_comparison
         return NotImplemented
