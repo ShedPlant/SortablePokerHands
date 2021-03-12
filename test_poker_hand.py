@@ -1,5 +1,6 @@
 import unittest
 import logging
+from itertools import combinations
 from random import shuffle
 
 from poker_hand import PokerHand
@@ -222,41 +223,34 @@ class TestPokerHandSorting(unittest.TestCase):
 
 #@unittest.skip("Disable for now")
 class TestPokerHandSortingPerformance(unittest.TestCase):
-    def test_time_to_create_hands(self):
-        dealer = Dealer()
-        random_hands = []
-        # Benchmark on home PC only running this test:
-        #     10   0.002s
-        #    100   0.006s
-        #   1000   0.062s
-        #  10000   0.430s
-        # 100000   4.473s
-        number_of_hands_to_benchmark = 10000
-        number_of_packs_to_benchmark = number_of_hands_to_benchmark / 10
-        _logger.debug("Benchmark start creating PokerHand objects: " + str(number_of_hands_to_benchmark))
-        for hand_string in dealer.deal_pack(number_of_packs_to_benchmark):
-            random_hands.append(PokerHand(hand_string))
-        _logger.debug("Benchmark end creating PokerHand objects: " + str(number_of_hands_to_benchmark))
-
-    # TODO this also creates hands, better to split up timings
     def test_time_to_sort(self):
         dealer = Dealer()
         random_hands = []
         # Benchmark on home PC only running this test:
-        #     10   0.002s
-        #    100   0.028s
-        #   1000   0.100s
-        #  10000   0.917s
-        # 100000   9.532s
-        number_of_hands_to_benchmark = 10000
+        #  Hands  Times Sorted Time
+        #     10            1   0.002s
+        #     50        25000  19.291s
+        #    100            1   0.028s
+        #   1000            1   0.100s
+        #  10000            1   0.917s
+        # 100000            1   9.532s
+        number_of_hands_to_benchmark = 50
+        number_of_times_to_sort_hands = 25000
+
         number_of_packs_to_benchmark = number_of_hands_to_benchmark / 10
-        _logger.debug("Benchmark start creating PokerHand objects: " + str(number_of_hands_to_benchmark))
+        test_desc = str(number_of_hands_to_benchmark) + " hands " + str(number_of_times_to_sort_hands) + " times "
+        _logger.debug("Benchmark start creating PokerHand objects: " + test_desc)
         for hand_string in dealer.deal_pack(number_of_packs_to_benchmark):
             random_hands.append(PokerHand(hand_string))
-        _logger.debug("Benchmark end creating PokerHand objects: " + str(number_of_hands_to_benchmark))
-        _logger.debug("Benchmark now sorting: " + str(number_of_hands_to_benchmark))
-        random_hands.sort()
-        _logger.debug("Benchmark end sorting: " + str(number_of_hands_to_benchmark))
+        _logger.debug("Benchmark end creating PokerHand objects: " + test_desc)
+
+        _logger.debug("Benchmark now sorting: " + test_desc)
+        number_of_times_sorted_hands = 0
+        while number_of_times_sorted_hands < number_of_times_to_sort_hands:
+            number_of_times_sorted_hands = number_of_times_sorted_hands + 1
+            random_hands_copy = random_hands.copy()
+            random_hands_copy.sort()
+        _logger.debug("Benchmark end sorting: " + test_desc)
 
 if __name__ == "__main__":
     _logger = logging.getLogger(__name__)
@@ -266,15 +260,14 @@ if __name__ == "__main__":
     )
     _logger.info("Sortable Poker Hands Tests")
     _logger.info("Author: Ed Plant")
-    unittest.main()
+    #unittest.main()
 
     # Run a single test (comment/uncomment as needed)
     # https://stackoverflow.com/questions/15971735/running-a-single-test-from-unittest-testcase-via-the-command-line
-    """
     suite = unittest.TestSuite()
-    suite.addTest(TestPokerHandSortingPerformance("test_time_to_create_hands"))
-    #suite.addTest(TestPokerHandSortingPerformance("test_time_to_sort"))
-    """
+    #suite.addTest(TestPokerHandSortingPerformance("test_time_to_create_hands"))
+    suite.addTest(TestPokerHandSortingPerformance("test_time_to_sort"))
+    #suite.addTest(TestPokerHandSortingPerformance("test_time_for_many_comparisons"))
     """
     suite.addTest(TestPokerHandValue("test_high_card"))
     suite.addTest(TestPokerHandValue("test_flush"))
@@ -290,7 +283,5 @@ if __name__ == "__main__":
     suite.addTest(TestPokerHandValue("test_straight_flush"))
     suite.addTest(TestPokerHandSorting("test_draw_straight_flush"))
     """
-    """
     runner = unittest.TextTestRunner()
     runner.run(suite)
-    """
