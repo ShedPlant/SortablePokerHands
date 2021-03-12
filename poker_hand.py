@@ -61,6 +61,8 @@ class PokerHand(object):
         # Get a list of the number of matching cards (regardless of their face value)
         # Then can return appropriate PokerHandValue
         group_count = list(self.hands_sorted_by_group_value.values())
+        # TODO only the first two groups matter, discard rest
+        # TODO have two layers of if, don't check '2' first group twice for example
         #self._logger.debug(group_count)
         if group_count == [2, 1, 1, 1]:
             self.hand_value = PokerHandValue.Pair
@@ -73,6 +75,7 @@ class PokerHand(object):
         elif group_count == [3, 2]:
             self.hand_value = PokerHandValue.FullHouse
         elif group_count == [1, 1, 1, 1, 1]:
+            # TODO move to top of list, this is more common
 
             if (CardValue.Ace   in self.hands_sorted_by_group_value and
                 CardValue.Two   in self.hands_sorted_by_group_value and
@@ -84,23 +87,24 @@ class PokerHand(object):
                 self.hands_sorted_by_group_value[CardValue.AceLow] = self.hands_sorted_by_group_value.pop(CardValue.Ace)
                 
             previous_val = None
-            num_in_sequence = 1
+            straight = True
             for current_val in self.hands_sorted_by_group_value:
                 if previous_val:
-                    if previous_val - current_val == 1:
-                        num_in_sequence = num_in_sequence + 1
+                    if previous_val - current_val != 1:
+                        straight = False
+                        break
 
                 previous_val = current_val
 
             unique_suits = set(getattr(card, 'suit') for card in hand_as_list_of_card)
             if len(unique_suits) == 1:
-                if num_in_sequence == len(self.hands_sorted_by_group_value):
+                if straight:
                     # Simpler to treat Royal Flush as a Straight Flush,
                     # rather than its own type of hand.
                     self.hand_value = PokerHandValue.StraightFlush
                 else:
                     self.hand_value = PokerHandValue.Flush
-            elif num_in_sequence == len(self.hands_sorted_by_group_value):
+            elif straight:
                 self.hand_value = PokerHandValue.Straight
             else:
                 self.hand_value = PokerHandValue.HighCard

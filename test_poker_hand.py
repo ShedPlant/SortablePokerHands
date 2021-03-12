@@ -229,13 +229,15 @@ class TestPokerHandSortingPerformance(unittest.TestCase):
         # Benchmark on home PC only running this test:
         #  Hands  Times Sorted Time
         #     10            1   0.002s
-        #     50        25000  19.291s
+        #     50          100   0.144s
+        #     50        25000  19.230s, 20.215s
         #    100            1   0.028s
         #   1000            1   0.100s
         #  10000            1   0.917s
         # 100000            1   9.532s
         number_of_hands_to_benchmark = 50
         number_of_times_to_sort_hands = 25000
+        #number_of_times_to_sort_hands = 100
 
         number_of_packs_to_benchmark = number_of_hands_to_benchmark / 10
         test_desc = str(number_of_hands_to_benchmark) + " hands " + str(number_of_times_to_sort_hands) + " times "
