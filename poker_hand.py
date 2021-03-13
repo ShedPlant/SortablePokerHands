@@ -117,6 +117,9 @@ class PokerHand(object):
         """
         self.score = [ self.hand_value ]
         self.score.extend(grouped_sorted_unq_vals)
+        # https://stackoverflow.com/questions/35004882/make-a-list-of-ints-hashable-in-python
+        # Tuple is hashable for speed
+        self.score = tuple(self.score)
 
 
     # Compare this hand score with another hand score
