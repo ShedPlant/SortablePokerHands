@@ -58,18 +58,21 @@ class PokerHand(object):
         #self._logger.debug(self.hand_sorted_by_group_value)
         # {<CardValue.Nine: '9'>: 2, <CardValue.King: 'K'>: 1, <CardValue.Five: '5'>: 1, <CardValue.Three: '3'>: 1}
 
+        self.hand_sorted_for_draw_comparison = list(self.hand_sorted_by_group_value.keys())
         group_counts = list(self.hand_sorted_by_group_value.values())
         first_group_count = group_counts[0]
         second_group_count = group_counts[1]
         if first_group_count == 1:
-            if (CardValue.Ace   in self.hand_sorted_by_group_value and
-                CardValue.Two   in self.hand_sorted_by_group_value and
-                CardValue.Three in self.hand_sorted_by_group_value and
-                CardValue.Four  in self.hand_sorted_by_group_value and
-                CardValue.Five  in self.hand_sorted_by_group_value):
+            if (self.hand_sorted_for_draw_comparison[0] == CardValue.Ace and
+                self.hand_sorted_for_draw_comparison[1] == CardValue.Five):
+                # We already know there are 5 unique cards in descending order
+                # so if first is Ace and second is Five, it follows that the rest are:
+                # Four, Three, Two.
                 # Move Ace to Ace Low
                 # This hand combination is the *only* time it's ever used
                 self.hand_sorted_by_group_value[CardValue.AceLow] = self.hand_sorted_by_group_value.pop(CardValue.Ace)
+                self.hand_sorted_for_draw_comparison = self.hand_sorted_for_draw_comparison[:4]
+                self.hand_sorted_for_draw_comparison.append(CardValue.AceLow)
                 
             previous_val = None
             straight = True
