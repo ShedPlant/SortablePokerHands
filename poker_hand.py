@@ -1,7 +1,7 @@
 import logging
 from collections      import Counter
 from card             import Card
-from card_value       import CardValue
+from card_value       import CardValue, VALID_VALUES
 from poker_hand_value import PokerHandValue
 
 # A hand of five cards whose value can be compared against another hand
@@ -49,27 +49,28 @@ class PokerHand(object):
         # sort by value *first*
         # then use Counter to sort by group sizes
         ungrouped_sorted_vals = sorted(getattr(card, 'value') for card in unsorted_cards)
-        grouped_sorted_vals = Counter(ungrouped_sorted_vals).most_common()
+        c = Counter(getattr(card_value, 'value') for card_value in ungrouped_sorted_vals)
+        grouped_sorted_vals = c.most_common()
         grouped_sorted_unq_vals = list(dict(grouped_sorted_vals))
 
         first_group_size = grouped_sorted_vals[0][1]
         second_group_size = grouped_sorted_vals[1][1]
         if first_group_size == 1:
-            # We already know there are 5 unique cards in descending order
-            # so if first is Ace and second is Five,
+            # We already know there are 5 unique cards in descending order.
+            # So, if first is Ace and second is Five,
             # it follows that the rest are Four, Three, Two.
-            if (grouped_sorted_unq_vals[0] == CardValue.Ace and
-                grouped_sorted_unq_vals[1] == CardValue.Five):
+            if (grouped_sorted_unq_vals[0] == VALID_VALUES["A"]["value"] and
+                grouped_sorted_unq_vals[1] == VALID_VALUES["5"]["value"]):
                 # Move Ace from beginning to Ace Low at end
                 # This hand combination is the *only* time it's ever used
                 grouped_sorted_unq_vals.pop(0)
-                grouped_sorted_unq_vals.append(CardValue.AceLow)
+                grouped_sorted_unq_vals.append(CardValue("a").value)
                 
             previous_val = None
             straight = True
             for current_val in grouped_sorted_unq_vals:
                 if previous_val:
-                    if previous_val - current_val != -1:
+                    if previous_val - current_val != 1:
                         straight = False
                         break
                 previous_val = current_val
@@ -102,20 +103,21 @@ class PokerHand(object):
             raise Exception("Internal error while processing: " + self.hand_as_string)
 
         """
-        Final Hand Score is a list to easily resolve tiebreakers:
-        e.g. for "5C 9D KH 9C 3S" :
-        -------------------------------------------------------------------------------
-        | index |        desc |     class type | always present |             example |
-        -------------------------------------------------------------------------------
-        |     0 |  Hand Value | PokerHandValue |           True | PokerHandValue.Pair |
-        |     1 |   1st Group |      CardValue |           True |      CardValue.Nine |
-        |     2 |   2nd Group |      CardValue |           True |      CardValue.King |
-        |     3 |   3rd Group |      CardValue |          False |      CardValue.Five |
-        |     4 |   4th Group |      CardValue |          False |     CardValue.Three |
-        |     5 |   5th Group |      CardValue |          False |                     |
-        -------------------------------------------------------------------------------
+        Final Hand Score is a tuple (immutable list) of between 3 and 6 raw integers
+        to compare hands and resolve ties, as efficiently as possible.
+        e.g. for "5C 9D KH 9C 3S" (a pair of nines)
+        |-------|-------------|----------------|---------------------|-----------|
+        | index |        desc | always present |                from | raw value |
+        |-------|-------------|----------------|---------------------|-----------|
+        |     0 |  Hand Value |           True | PokerHandValue.Pair |         2 |
+        |     1 |   1st Group |           True |      CardValue.Nine |         9 |
+        |     2 |   2nd Group |           True |      CardValue.King |        13 |
+        |     3 |   3rd Group |          False |      CardValue.Five |         5 |
+        |     4 |   4th Group |          False |     CardValue.Three |         3 |
+        |     5 |   5th Group |          False |                     |           |
+        |-------|-------------|----------------|---------------------|-----------|
         """
-        self.score = [ self.hand_value ]
+        self.score = [ self.hand_value.value ]
         self.score.extend(grouped_sorted_unq_vals)
         # https://stackoverflow.com/questions/35004882/make-a-list-of-ints-hashable-in-python
         # Tuple is hashable for speed
@@ -129,5 +131,7 @@ class PokerHand(object):
     # @return True if self wins, False if other wins or same
     def __lt__(self, other):
         if self.__class__ is other.__class__:
-            return self.score < other.score
+            # Counter intuitive but 'less' means 'sort first'
+            # Sort higher ranked cards first
+            return self.score > other.score
         return NotImplemented

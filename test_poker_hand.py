@@ -227,7 +227,7 @@ class TestPokerHandSortingPerformance(unittest.TestCase):
         random_hands = []
         # Benchmark on home PC only running this test:
         #  Hands  Times Sorted Time
-        #     50        25000  10.538s, 10.529s, 11.253s
+        #     50        25000  1.234s, 1.172s, 1.313s
         number_of_hands_to_benchmark = 50
         number_of_times_to_sort_hands = 25000
 
@@ -253,17 +253,19 @@ if __name__ == "__main__":
     )
     _logger.info("Sortable Poker Hands Tests")
     _logger.info("Author: Ed Plant")
-    #unittest.main()
+    unittest.main()
 
     # Run a single test (comment/uncomment as needed)
     # https://stackoverflow.com/questions/15971735/running-a-single-test-from-unittest-testcase-via-the-command-line
+    """
     suite = unittest.TestSuite()
-    #suite.addTest(TestPokerHandValue("test_high_card"))
-    #suite.addTest(TestPokerHandValue("test_straight"))
-    #suite.addTest(TestPokerHandSorting("test_pair_beats_high_card"))
-    #suite.addTest(TestPokerHandSorting("test_draw_high_card"))
+    suite.addTest(TestPokerHandValue("test_high_card"))
+    suite.addTest(TestPokerHandValue("test_pair"))
+    suite.addTest(TestPokerHandValue("test_straight"))
+    suite.addTest(TestPokerHandSorting("test_pair_beats_high_card"))
+    suite.addTest(TestPokerHandSorting("test_draw_high_card"))
     #suite.addTest(TestPokerHandSorting("test_draw_pair"))
-    #suite.addTest(TestPokerHandValue("test_pair"))
     suite.addTest(TestPokerHandSortingPerformance("test_time_to_sort"))
     runner = unittest.TextTestRunner()
     runner.run(suite)
+    """

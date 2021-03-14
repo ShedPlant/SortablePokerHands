@@ -1,4 +1,4 @@
-from card_value import CardValue
+from card_value import VALID_VALUES
 from card_suit  import CardSuit
 from random import shuffle
 
@@ -15,9 +15,9 @@ class Dealer():
         pack = []
         number_of_packs_completed = 0
         for suit in list(CardSuit):
-            for card_value in list(CardValue):
-                if card_value.value != 'a':
-                    pack.append(card_value.value + suit.value)
+            for card_value in VALID_VALUES.keys():
+                if VALID_VALUES[card_value]["name"] != "AceLow":
+                    pack.append(card_value + suit.value)
 
         while number_of_packs_completed < number_of_packs:
             shuffle(pack)
