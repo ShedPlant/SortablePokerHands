@@ -18,3 +18,6 @@ class Card(object):
 
     def get_value(self):
         return self.value
+
+    def __lt__(self, other):
+        return self.value < other.value
