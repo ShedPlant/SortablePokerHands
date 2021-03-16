@@ -58,7 +58,8 @@ test_hands = {
     }
 }
 
-#@unittest.skip("Disable for now")
+
+# @unittest.skip("Disable for now")
 class TestPokerHandErrorHandling(unittest.TestCase):
     def test_no_cards(self):
         with self.assertRaises(Exception):
@@ -86,7 +87,8 @@ class TestPokerHandErrorHandling(unittest.TestCase):
         with self.assertRaises(Exception):
             PokerHand("KS KS AS QS TS")
 
-#@unittest.skip("Disable for now")
+
+# @unittest.skip("Disable for now")
 class TestPokerHandValue(unittest.TestCase):
     def assertHandValuedCorrectly(self, poker_hand_value):
         many_hands_list = []
@@ -127,7 +129,8 @@ class TestPokerHandValue(unittest.TestCase):
     def test_high_card(self):
         self.assertHandValuedCorrectly(PokerHandValue.HighCard)
 
-#@unittest.skip("Disable for now")
+
+# @unittest.skip("Disable for now")
 class TestPokerHandSorting(unittest.TestCase):
     def shuffleAndConfirmHandsSorted(self, list_of_hand_strings):
         manually_sorted_hands = []
@@ -151,7 +154,7 @@ class TestPokerHandSorting(unittest.TestCase):
         self.shuffleAndConfirmHandsSorted([
             test_hands[PokerHandValue.Pair.name]["Higher"],
             test_hands[PokerHandValue.HighCard.name]["Higher"]
-        ] )
+        ])
 
     def test_all_hand_types_sorted(self):
         # Aware that I could iterate over PokerHandValue members
@@ -176,12 +179,12 @@ class TestPokerHandSorting(unittest.TestCase):
                 )
             self.shuffleAndConfirmHandsSorted(many_hands_list)
 
-    def shuffleAndConfirmDrawSorted(self,poker_hand_value):
+    def shuffleAndConfirmDrawSorted(self, poker_hand_value):
         self.shuffleAndConfirmHandsSorted([
             test_hands[poker_hand_value.name]["Higher"],
             test_hands[poker_hand_value.name]["Middle"],
             test_hands[poker_hand_value.name]["Lower"]
-        ] )
+        ])
 
     def test_draw_high_card(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.HighCard)
@@ -209,7 +212,7 @@ class TestPokerHandSorting(unittest.TestCase):
             test_hands[PokerHandValue.Flush.name]["Hearts"],
             test_hands[PokerHandValue.Flush.name]["Diamonds"],
             test_hands[PokerHandValue.Flush.name]["Clubs"]
-        ] )
+        ])
 
     def test_draw_full_house(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.FullHouse)
@@ -220,7 +223,8 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_draw_straight_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.StraightFlush)
 
-#@unittest.skip("Disable for now")
+
+# @unittest.skip("Disable for now")
 class TestPokerHandSortingPerformance(unittest.TestCase):
     def test_time_to_sort(self):
         dealer = Dealer()
@@ -232,8 +236,10 @@ class TestPokerHandSortingPerformance(unittest.TestCase):
         number_of_times_to_sort_hands = 25000
 
         number_of_packs_to_benchmark = number_of_hands_to_benchmark / 10
-        test_desc = str(number_of_hands_to_benchmark) + " hands " + str(number_of_times_to_sort_hands) + " times "
-        _logger.debug("Benchmark start creating PokerHand objects: " + test_desc)
+        test_desc = (str(number_of_hands_to_benchmark) + " hands " +
+                     str(number_of_times_to_sort_hands) + " times ")
+        _logger.debug(
+            "Benchmark start creating PokerHand objects: " + test_desc)
         for hand_string in dealer.deal_pack(number_of_packs_to_benchmark):
             random_hands.append(PokerHand(hand_string))
         _logger.debug("Benchmark end creating PokerHand objects: " + test_desc)
@@ -245,11 +251,12 @@ class TestPokerHandSortingPerformance(unittest.TestCase):
             sorted(random_hands)
         _logger.debug("Benchmark end sorting: " + test_desc)
 
+
 if __name__ == "__main__":
     _logger = logging.getLogger(__name__)
     logging.basicConfig(
-        level = logging.DEBUG,
-        format = '%(asctime)-15s - %(levelname)s - %(message)s'
+        level=logging.DEBUG,
+        format='%(asctime)-15s - %(levelname)s - %(message)s'
     )
     _logger.info("Sortable Poker Hands Tests")
     _logger.info("Author: Ed Plant")

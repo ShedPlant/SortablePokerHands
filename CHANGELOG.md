@@ -6,6 +6,7 @@
 
 - Passes performance tests
 - Class diagram
+- Flake8 Linting
 
 ## [0.0.1] - 2020-03-10
 

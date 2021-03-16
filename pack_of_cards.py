@@ -1,6 +1,7 @@
 from random import shuffle
 from card_value import CardValue
-from card_suit  import CardSuit
+from card_suit import CardSuit
+
 
 class PackOfCards(list):
     def __new__(self):

@@ -1,5 +1,6 @@
 from card_value import CardValue
-from card_suit  import CardSuit
+from card_suit import CardSuit
+
 
 class Card(object):
     def __repr__(self):

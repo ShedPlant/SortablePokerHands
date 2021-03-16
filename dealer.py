@@ -1,13 +1,14 @@
 from pack_of_cards import PackOfCards
 
-"""
- Create a number of pack of cards
- Shuffle each one and deal into 5 card hands, throw away the 2 remaining
- Return the list of hands
 
- Useful for benchmarking / random testing
-"""
 class Dealer():
+    """
+    Create a number of pack of cards
+    Shuffle each one and deal into 5 card hands, throw away the 2 remaining
+    Return the list of hands
+
+    Useful for benchmarking / random testing
+    """
     def deal_pack(self, number_of_packs):
         hands = []
         number_of_packs_completed = 0

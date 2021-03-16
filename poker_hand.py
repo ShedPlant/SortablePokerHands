@@ -1,8 +1,9 @@
 import logging
-from collections      import Counter
-from card             import Card
-from card_value       import CardValue
+from collections import Counter
+from card import Card
+from card_value import CardValue
 from poker_hand_value import PokerHandValue
+
 
 # A hand of five cards whose value can be compared against another hand
 # according to Poker rules
@@ -32,7 +33,9 @@ class PokerHand(object):
                 raise Exception("Hand must contain 5 cards!")
         except Exception as e:
             # TODO use more specific, perhaps custom, exceptions?
-            self._logger.warning("Poker Hand: \"" + self.hand_as_string + "\" failed!\n" + str(e))
+            self._logger.warning(
+                "Poker Hand: \"" + self.hand_as_string +
+                "\" failed!\n" + str(e))
             raise e
 
         # Poker hands ties are resolved by:
@@ -52,7 +55,8 @@ class PokerHand(object):
 
         # A list of CardValue objects
         # with duplicates removed, for later tiebreaking
-        # e.g. if hand was four of a kind of Jack, only add one Jack for the group.
+        # e.g. if hand was four of a kind of Jack,
+        # only add one Jack for the group.
         # It will only be compared to another hand with four of a kind
         grouped_sorted_unq_vals = list(dict(grouped_sorted_vals))
 
@@ -63,12 +67,12 @@ class PokerHand(object):
             # So, if first is Ace and second is Five,
             # it follows that the rest are Four, Three, Two.
             if (grouped_sorted_unq_vals[0] == CardValue.ACE and
-                grouped_sorted_unq_vals[1] == CardValue.FIVE):
+                    grouped_sorted_unq_vals[1] == CardValue.FIVE):
                 # Move Ace from beginning to Ace Low at end
                 # This hand combination is the *only* time it's ever used
                 grouped_sorted_unq_vals.pop(0)
                 grouped_sorted_unq_vals.append(CardValue.ACE_LOW)
-                
+
             previous_val = None
             straight = True
             for current_val in grouped_sorted_unq_vals:
@@ -103,7 +107,8 @@ class PokerHand(object):
         elif first_group_size == 4:
             self.hand_value = PokerHandValue.FourOfAKind
         else:
-            raise Exception("Internal error while processing: " + self.hand_as_string)
+            raise Exception(
+                "Internal error while processing: " + self.hand_as_string)
 
         """
         Final Hand Score is used to compare hands
@@ -128,12 +133,13 @@ class PokerHand(object):
         |     5 |   5th Group |                     |         |
         |-------|-------------|---------------------|---------|
         """
-        self.score = [ self.hand_value.value ]
-        self.score.extend(getattr(cv, 'score') for cv in grouped_sorted_unq_vals)
+        self.score = [self.hand_value.value]
+        self.score.extend(
+            getattr(cv, 'score') for cv in grouped_sorted_unq_vals
+        )
         # https://stackoverflow.com/questions/35004882/make-a-list-of-ints-hashable-in-python
         # Tuple is hashable for speed
         self.score = tuple(self.score)
-
 
     # Compare this hand score with another hand score
     # @param self  = this object
