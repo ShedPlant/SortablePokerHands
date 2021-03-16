@@ -35,6 +35,11 @@ hands.append(PokerHand("2C 3C AC 4C 5C"))
 hands.sort() (or sorted(hands))
 ```
 Apply the Texas Hold'em rules for ranking the cards.
+
+https://en.wikipedia.org/wiki/Texas_hold_%27em
+
+https://en.wikipedia.org/wiki/List_of_poker_hands
+
 There is no ranking for the suits.
 An ace can either rank high or rank low in a straight or straight flush. Example of a straight with a low ace:
 `"5C 4D 3C 2S AS"`
@@ -74,10 +79,6 @@ for hand in SORTED_POKER_HANDS:
     test.assert_equals(next(userSortedHands), hand)
 ```
 
-https://en.wikipedia.org/wiki/Texas_hold_%27em
-
-https://en.wikipedia.org/wiki/List_of_poker_hands
-
 # Reflections
 I created a class model:
 - CardValue
@@ -101,11 +102,14 @@ My phases of thinking were:
 - compare one hand with another where the hand type differes
 - then think about draws within same type
 
-By that point, I had something that functionally worked but didn't perform very well. It timed out on CodeWars. So I created a benchmark test: 17s to create and sort 10^6 random hands.
+By that point [0.0.1], I had something that functionally worked but didn't perform very well. It timed out on CodeWars. So I created a benchmark test: 17s to create and sort 10^6 random hands.
 With my fuller understanding of the problem, I went back and started again with a simpler sorting approach that worked whether the hand value were different or the same.
 Reduced benchmark to about 9s.
 However it still times out on the CodeWars full random tests. I'm a little disappointed!
 
 I really enjoyed working on this assignment. I spent about 2 days on it in total.
 
-I would really appreciate any review comments and feedback about any aspects I did well or not so well.
+I returned to this task and improved the comparison significantly so that it now passes the performance tests [0.0.2].
+
+[0.0.1]: https://github.com/ShedPlant/SortablePokerHands/releases/tag/v0.0.1
+[0.0.2]: https://github.com/ShedPlant/SortablePokerHands/releases/tag/v0.0.2
