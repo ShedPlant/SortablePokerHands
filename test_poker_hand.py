@@ -37,9 +37,7 @@ test_hands = {
         "Middle":   "2C 8C 9C QC KC",
         "Higher":   "2C 8C 9C QC AC",
         "Spades":   "2S 8S 9S QS AS",
-        "Hearts":   "2H 8H 9H QH AH",
-        "Diamonds": "2D 8D 9D QD AD",
-        "Clubs":    "3C 8C TC QC AC"
+        "Hearts":   "2H 8H 9H QH AH"
     },
     "FullHouse": {
         "Lower":  "5C QC QH 5S QS",
@@ -204,15 +202,12 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_draw_flush(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.Flush)
 
-    @unittest.expectedFailure
     def test_draw_same(self):
         # pylint: disable=maybe-no-member
-        self.shuffleAndConfirmHandsSorted([
-            test_hands[PokerHandValue.Flush.name]["Spades"],
-            test_hands[PokerHandValue.Flush.name]["Hearts"],
-            test_hands[PokerHandValue.Flush.name]["Diamonds"],
-            test_hands[PokerHandValue.Flush.name]["Clubs"]
-        ])
+        self.assertEqual(
+            PokerHand(test_hands[PokerHandValue.Flush.name]["Spades"]),
+            PokerHand(test_hands[PokerHandValue.Flush.name]["Hearts"])
+        )
 
     def test_draw_full_house(self):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.FullHouse)
@@ -260,12 +255,12 @@ if __name__ == "__main__":
     )
     _logger.info("Sortable Poker Hands Tests")
     _logger.info("Author: Ed Plant")
-    unittest.main()
+    #unittest.main()
 
     # Run a single test (comment/uncomment as needed)
     # https://stackoverflow.com/questions/15971735/running-a-single-test-from-unittest-testcase-via-the-command-line
-    """
     suite = unittest.TestSuite()
+    """
     suite.addTest(TestPokerHandValue("test_high_card"))
     suite.addTest(TestPokerHandValue("test_pair"))
     suite.addTest(TestPokerHandValue("test_straight"))
@@ -273,6 +268,7 @@ if __name__ == "__main__":
     suite.addTest(TestPokerHandSorting("test_draw_high_card"))
     #suite.addTest(TestPokerHandSorting("test_draw_pair"))
     suite.addTest(TestPokerHandSortingPerformance("test_time_to_sort"))
+    """
+    suite.addTest(TestPokerHandSorting("test_draw_same"))
     runner = unittest.TextTestRunner()
     runner.run(suite)
-    """

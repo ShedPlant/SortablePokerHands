@@ -152,3 +152,13 @@ class PokerHand(object):
             # Sort higher ranked cards first
             return self.score > other.score
         return NotImplemented
+
+    # Compare this hand score with another hand score
+    # @param self  = this object
+    # @param other = another PokerHand object
+    #
+    # @return True if scores equal
+    def __eq__(self, other):
+        if self.__class__ is other.__class__:
+            return self.score == other.score
+        return NotImplemented

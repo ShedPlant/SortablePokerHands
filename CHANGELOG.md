@@ -5,6 +5,7 @@
 ### Added
 
 - Passes performance tests
+- Two hands with same score considered equal
 - Class diagram
 - Flake8 Linting
 
