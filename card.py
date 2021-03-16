@@ -2,6 +2,9 @@ from card_value import CardValue
 from card_suit  import CardSuit
 
 class Card(object):
+    def __repr__(self):
+        return self.value.value + self.suit.value
+
     def __init__(self, card_as_string):
         if len(card_as_string) != 2:
             raise Exception(card_as_string + " is not a valid card!")
