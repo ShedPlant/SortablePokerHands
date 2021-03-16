@@ -5,6 +5,7 @@
 ### Added
 
 - Passes performance tests
+- Class diagram
 
 ## [0.0.1] - 2020-03-10
 
