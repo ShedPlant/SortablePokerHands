@@ -1,6 +1,4 @@
-from card_value import CardValue
-from card_suit  import CardSuit
-from random import shuffle
+from pack_of_cards import PackOfCards
 
 """
  Create a number of pack of cards
@@ -12,15 +10,9 @@ from random import shuffle
 class Dealer():
     def deal_pack(self, number_of_packs):
         hands = []
-        pack = []
         number_of_packs_completed = 0
-        for suit in list(CardSuit):
-            for card_value in list(CardValue):
-                if card_value.name != "ACE_LOW":
-                    pack.append(card_value.value + suit.value)
-
         while number_of_packs_completed < number_of_packs:
-            shuffle(pack)
+            pack = PackOfCards()
             start_index = 0
             end_index = 5
             while end_index < 50:
