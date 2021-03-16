@@ -1,76 +1,48 @@
-VALID_VALUES = {
-    "A": {
-        "name": "Ace",
-        "value": 14
-    },
-    "K": {
-        "name": "King",
-        "value": 13
-    },
-    "Q": {
-        "name": "Queen",
-        "value": 12
-    },
-    "J": {
-        "name": "Jack",
-        "value": 11
-    },
-    "T": {
-        "name": "Ten",
-        "value": 10
-    },
-    "9": {
-        "name": "Nine",
-        "value": 9
-    },
-    "8": {
-        "name": "Eight",
-        "value": 8
-    },
-    "7": {
-        "name": "Seven",
-        "value": 7
-    },
-    "6": {
-        "name": "Six",
-        "value": 6
-    },
-    "5": {
-        "name": "Five",
-        "value": 5
-    },
-    "4": {
-        "name": "Four",
-        "value": 4
-    },
-    "3": {
-        "name": "Three",
-        "value": 3
-    },
-    "2": {
-        "name": "Two",
-        "value": 2
-    },
-    "a": {
-        "name": "AceLow",
-        "value": 1
-    }
-}
+from enum import Enum
+# Adapted from
+# https://docs.python.org/3/library/enum.html#planet
+# 
+# CardValue has two attributes:
+# value = a single character string, might be a number or a letter. 
+#         Used for lookups
+# score = an integer score. May or may not be int representation of 'value'
+class CardValue(Enum):
+    def __new__(cls, value):
+        # Scores are assigned automatically by order listed
+        # starting with 1
+        score = len(cls.__members__) + 1
+        obj = object.__new__(cls)
 
-class CardValue():
-    def __repr__(self): return self.val_as_string
+        # Value is a single character string 
+        # used for Enum lookups e.g. CardValue('5')
+        obj._value_ = value
+        # This variable can only be exposed by property method below
+        # can't use the same exact variable name
+        obj._score_ = score
+        return obj
 
-    def __init__(self, val_as_string):
-        self.val_as_string = val_as_string
-
-        # This will raise exception if input was invalid
-        self.name = VALID_VALUES[val_as_string]["name"]
-        self.value = VALID_VALUES[val_as_string]["value"]
+    @property
+    # Score is an integer value
+    def score(self):
+        return self._score_
 
     def __lt__(self, other):
-        # Counter intuitive but 'less' means 'sort first'
-        # Sort higher ranked cards first
-        return self.value > other.value
+        return self.score < other.score
 
     def __sub__(self, other):
-        return self.value - other.value
+        return self.score - other.score
+
+    ACE_LOW = 'a'
+    TWO     = '2'
+    THREE   = '3'
+    FOUR    = '4'
+    FIVE    = '5'
+    SIX     = '6'
+    SEVEN   = '7'
+    EIGHT   = '8'
+    NINE    = '9'
+    TEN     = 'T'
+    JACK    = 'J'
+    QUEEN   = 'Q'
+    KING    = 'K'
+    ACE     = 'A'
