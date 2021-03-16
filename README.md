@@ -102,12 +102,12 @@ My phases of thinking were:
 - compare one hand with another where the hand type differes
 - then think about draws within same type
 
-By that point [0.0.1], I had something that functionally worked but didn't perform very well. It timed out on CodeWars. So I created a benchmark test: 17s to create and sort 10^6 random hands.
+By that point, I had something that functionally worked but didn't perform very well. It timed out on CodeWars. So I created a benchmark test: 17s to create and sort 10^6 random hands.
 With my fuller understanding of the problem, I went back and started again with a simpler sorting approach that worked whether the hand value were different or the same.
 Reduced benchmark to about 9s.
 However it still times out on the CodeWars full random tests. I'm a little disappointed!
 
-I really enjoyed working on this assignment. I spent about 2 days on it in total.
+I really enjoyed working on this assignment. I spent about 2 days on it to produce [0.0.1]
 
 I returned to this task and improved the comparison significantly so that it now passes the performance tests [0.0.2].
 
