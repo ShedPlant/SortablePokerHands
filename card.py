@@ -14,11 +14,5 @@ class Card(object):
         self.value = CardValue(card_as_string[0])
         self.suit = CardSuit(card_as_string[1])
 
-    def get_suit(self):
-        return self.suit
-
-    def get_value(self):
-        return self.value
-
     def __lt__(self, other):
         return self.value < other.value
