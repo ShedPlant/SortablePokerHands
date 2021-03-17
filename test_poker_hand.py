@@ -70,7 +70,7 @@ class TestPokerHandErrorHandling(unittest.TestCase):
 
     def test_too_many_cards(self):
         with self.assertRaises(Exception):
-            PokerHand("KS AS TS QS JS 1S")
+            PokerHand("KS AS TS QS JS 8S")
 
     def test_invalid_value(self):
         with self.assertRaises(Exception):
