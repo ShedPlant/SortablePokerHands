@@ -1,12 +1,6 @@
 # Changelog
 
-## [0.0.3] - 2020-03-17
-
-### Changed
-
-- Enum ALL_CAPS style
-
-## [0.0.2] - 2020-03-16
+## [0.0.2] - 2020-03-17
 
 ### Added
 
@@ -14,6 +8,7 @@
 - Two hands with same score considered equal
 - Class diagram
 - Flake8 Linting
+- Enum ALL_CAPS style
 
 ## [0.0.1] - 2020-03-10
 
