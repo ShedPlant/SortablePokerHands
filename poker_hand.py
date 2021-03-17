@@ -87,25 +87,25 @@ class PokerHand(object):
                 if straight:
                     # Simpler to treat Royal Flush as a Straight Flush,
                     # rather than its own type of hand.
-                    self.hand_value = PokerHandValue.StraightFlush
+                    self.hand_value = PokerHandValue.STRAIGHT_FLUSH
                 else:
-                    self.hand_value = PokerHandValue.Flush
+                    self.hand_value = PokerHandValue.FLUSH
             elif straight:
-                self.hand_value = PokerHandValue.Straight
+                self.hand_value = PokerHandValue.STRAIGHT
             else:
-                self.hand_value = PokerHandValue.HighCard
+                self.hand_value = PokerHandValue.HIGH_CARD
         elif first_group_size == 2:
             if second_group_size == 1:
-                self.hand_value = PokerHandValue.Pair
+                self.hand_value = PokerHandValue.PAIR
             elif second_group_size == 2:
-                self.hand_value = PokerHandValue.TwoPairs
+                self.hand_value = PokerHandValue.TWO_PAIRS
         elif first_group_size == 3:
             if second_group_size == 1:
-                self.hand_value = PokerHandValue.ThreeOfAKind
+                self.hand_value = PokerHandValue.THREE_OF_A_KIND
             elif second_group_size == 2:
-                self.hand_value = PokerHandValue.FullHouse
+                self.hand_value = PokerHandValue.FULL_HOUSE
         elif first_group_size == 4:
-            self.hand_value = PokerHandValue.FourOfAKind
+            self.hand_value = PokerHandValue.FOUR_OF_A_KIND
         else:
             raise Exception(
                 "Internal error while processing: " + self.hand_as_string)

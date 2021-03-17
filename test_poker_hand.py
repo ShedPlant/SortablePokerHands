@@ -7,49 +7,49 @@ from poker_hand_value import PokerHandValue
 from dealer import Dealer
 
 test_hands = {
-    "HighCard": {
+    "HIGH_CARD": {
         "Lower":  "TC 4H 7D KC 2S",
         "Middle": "JC 4H 7D KC 2S",
         "Higher": "TC 4H 7D AC 2S"
     },
-    "Pair": {
+    "PAIR": {
         "Lower":  "KC 8C 8H 7D 5S",
         "Middle": "5S 8C 8H 7D AC",
         "Higher": "5C 9D KH 9C 3S"
     },
-    "TwoPairs": {
+    "TWO_PAIRS": {
         "Lower":  "QC QH 6D 6C 5S",
         "Middle": "QC QH 7D 7C 5S",
         "Higher": "KC KH 7D 7C 5S"
     },
-    "ThreeOfAKind": {
+    "THREE_OF_A_KIND": {
         "Lower":  "JC JH JD 7C 5S",
         "Middle": "QC QH QD 7C 5S",
         "Higher": "KC KH KD 7C 5S"
     },
-    "Straight": {
+    "STRAIGHT": {
         "Lower":  "2C 3C AD 4H 5S",
         "Middle": "2D 6D 3D 4H 5S",
         "Higher": "5D 6C 7S 8C 9H"
     },
-    "Flush": {
+    "FLUSH": {
         "Lower":    "2C 8C 9C QC TC",
         "Middle":   "2C 8C 9C QC KC",
         "Higher":   "2C 8C 9C QC AC",
-        "Spades":   "2S 8S 9S QS AS",
-        "Hearts":   "2H 8H 9H QH AH"
+        "SPADES":   "2S 8S 9S QS AS",
+        "HEARTS":   "2H 8H 9H QH AH"
     },
-    "FullHouse": {
+    "FULL_HOUSE": {
         "Lower":  "5C QC QH 5S QS",
         "Middle": "5C KC KH 5S KS",
         "Higher": "7C KC KH 7S KS"
     },
-    "FourOfAKind": {
+    "FOUR_OF_A_KIND": {
         "Lower":  "QS 5S 5D 5H 5C",
         "Middle": "KS 5S 5D 5H 5C",
         "Higher": "KS 6S 6D 6H 6C"
     },
-    "StraightFlush": {
+    "STRAIGHT_FLUSH": {
         "Lower":  "2C 3C AC 4C 5C",
         "Middle": "2D 6D 3D 4D 5D",
         "Higher": "KS AS TS QS JS"
@@ -101,31 +101,31 @@ class TestPokerHandValue(unittest.TestCase):
             )
 
     def test_straight_flush(self):
-        self.assertHandValuedCorrectly(PokerHandValue.StraightFlush)
+        self.assertHandValuedCorrectly(PokerHandValue.STRAIGHT_FLUSH)
 
     def test_four_of_a_kind(self):
-        self.assertHandValuedCorrectly(PokerHandValue.FourOfAKind)
+        self.assertHandValuedCorrectly(PokerHandValue.FOUR_OF_A_KIND)
 
     def test_full_house(self):
-        self.assertHandValuedCorrectly(PokerHandValue.FullHouse)
+        self.assertHandValuedCorrectly(PokerHandValue.FULL_HOUSE)
 
     def test_flush(self):
-        self.assertHandValuedCorrectly(PokerHandValue.Flush)
+        self.assertHandValuedCorrectly(PokerHandValue.FLUSH)
 
     def test_straight(self):
-        self.assertHandValuedCorrectly(PokerHandValue.Straight)
+        self.assertHandValuedCorrectly(PokerHandValue.STRAIGHT)
 
     def test_three_of_a_kind(self):
-        self.assertHandValuedCorrectly(PokerHandValue.ThreeOfAKind)
+        self.assertHandValuedCorrectly(PokerHandValue.THREE_OF_A_KIND)
 
     def test_two_pairs(self):
-        self.assertHandValuedCorrectly(PokerHandValue.TwoPairs)
+        self.assertHandValuedCorrectly(PokerHandValue.TWO_PAIRS)
 
     def test_pair(self):
-        self.assertHandValuedCorrectly(PokerHandValue.Pair)
+        self.assertHandValuedCorrectly(PokerHandValue.PAIR)
 
     def test_high_card(self):
-        self.assertHandValuedCorrectly(PokerHandValue.HighCard)
+        self.assertHandValuedCorrectly(PokerHandValue.HIGH_CARD)
 
 
 # @unittest.skip("Disable for now")
@@ -150,8 +150,8 @@ class TestPokerHandSorting(unittest.TestCase):
     def test_pair_beats_high_card(self):
         # pylint: disable=maybe-no-member
         self.shuffleAndConfirmHandsSorted([
-            test_hands[PokerHandValue.Pair.name]["Higher"],
-            test_hands[PokerHandValue.HighCard.name]["Higher"]
+            test_hands[PokerHandValue.PAIR.name]["Higher"],
+            test_hands[PokerHandValue.HIGH_CARD.name]["Higher"]
         ])
 
     def test_all_hand_types_sorted(self):
@@ -161,15 +161,15 @@ class TestPokerHandSorting(unittest.TestCase):
         many_hands_list = []
         # pylint: disable=maybe-no-member
         for poker_hand_value in [
-            PokerHandValue.StraightFlush.name,
-            PokerHandValue.FourOfAKind.name,
-            PokerHandValue.FullHouse.name,
-            PokerHandValue.Flush.name,
-            PokerHandValue.Straight.name,
-            PokerHandValue.ThreeOfAKind.name,
-            PokerHandValue.TwoPairs.name,
-            PokerHandValue.Pair.name,
-            PokerHandValue.HighCard.name,
+            PokerHandValue.STRAIGHT_FLUSH.name,
+            PokerHandValue.FOUR_OF_A_KIND.name,
+            PokerHandValue.FULL_HOUSE.name,
+            PokerHandValue.FLUSH.name,
+            PokerHandValue.STRAIGHT.name,
+            PokerHandValue.THREE_OF_A_KIND.name,
+            PokerHandValue.TWO_PAIRS.name,
+            PokerHandValue.PAIR.name,
+            PokerHandValue.HIGH_CARD.name,
         ]:
             for order in ["Higher", "Middle", "Lower"]:
                 many_hands_list.append(
@@ -185,38 +185,38 @@ class TestPokerHandSorting(unittest.TestCase):
         ])
 
     def test_draw_high_card(self):
-        self.shuffleAndConfirmDrawSorted(PokerHandValue.HighCard)
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.HIGH_CARD)
 
     def test_draw_pair(self):
-        self.shuffleAndConfirmDrawSorted(PokerHandValue.Pair)
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.PAIR)
 
     def test_draw_two_pairs(self):
-        self.shuffleAndConfirmDrawSorted(PokerHandValue.TwoPairs)
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.TWO_PAIRS)
 
     def test_draw_three_of_a_kind(self):
-        self.shuffleAndConfirmDrawSorted(PokerHandValue.ThreeOfAKind)
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.THREE_OF_A_KIND)
 
     def test_draw_straight(self):
-        self.shuffleAndConfirmDrawSorted(PokerHandValue.Straight)
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.STRAIGHT)
 
     def test_draw_flush(self):
-        self.shuffleAndConfirmDrawSorted(PokerHandValue.Flush)
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.FLUSH)
 
     def test_draw_same(self):
         # pylint: disable=maybe-no-member
         self.assertEqual(
-            PokerHand(test_hands[PokerHandValue.Flush.name]["Spades"]),
-            PokerHand(test_hands[PokerHandValue.Flush.name]["Hearts"])
+            PokerHand(test_hands[PokerHandValue.FLUSH.name]["SPADES"]),
+            PokerHand(test_hands[PokerHandValue.FLUSH.name]["HEARTS"])
         )
 
     def test_draw_full_house(self):
-        self.shuffleAndConfirmDrawSorted(PokerHandValue.FullHouse)
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.FULL_HOUSE)
 
     def test_draw_four_of_a_kind(self):
-        self.shuffleAndConfirmDrawSorted(PokerHandValue.FourOfAKind)
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.FOUR_OF_A_KIND)
 
     def test_draw_straight_flush(self):
-        self.shuffleAndConfirmDrawSorted(PokerHandValue.StraightFlush)
+        self.shuffleAndConfirmDrawSorted(PokerHandValue.STRAIGHT_FLUSH)
 
 
 # @unittest.skip("Disable for now")
