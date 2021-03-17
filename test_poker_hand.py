@@ -6,6 +6,8 @@ from poker_hand import PokerHand
 from poker_hand_value import PokerHandValue
 from dealer import Dealer
 
+_logger = logging.getLogger(__name__)
+
 test_hands = {
     "HIGH_CARD": {
         "Lower":  "TC 4H 7D KC 2S",
@@ -57,7 +59,6 @@ test_hands = {
 }
 
 
-# @unittest.skip("Disable for now")
 class TestPokerHandErrorHandling(unittest.TestCase):
     def test_no_cards(self):
         with self.assertRaises(Exception):
@@ -79,14 +80,14 @@ class TestPokerHandErrorHandling(unittest.TestCase):
         with self.assertRaises(Exception):
             PokerHand("KS AS TS QS JX")
 
-    # Disabled exception to comply with codewars validation
+    """
     @unittest.expectedFailure
     def test_no_duplicates_allowed(self):
         with self.assertRaises(Exception):
             PokerHand("KS KS AS QS TS")
+    """
 
 
-# @unittest.skip("Disable for now")
 class TestPokerHandValue(unittest.TestCase):
     def assertHandValuedCorrectly(self, poker_hand_value):
         many_hands_list = []
@@ -128,7 +129,6 @@ class TestPokerHandValue(unittest.TestCase):
         self.assertHandValuedCorrectly(PokerHandValue.HIGH_CARD)
 
 
-# @unittest.skip("Disable for now")
 class TestPokerHandSorting(unittest.TestCase):
     def shuffleAndConfirmHandsSorted(self, list_of_hand_strings):
         manually_sorted_hands = []
@@ -219,7 +219,6 @@ class TestPokerHandSorting(unittest.TestCase):
         self.shuffleAndConfirmDrawSorted(PokerHandValue.STRAIGHT_FLUSH)
 
 
-# @unittest.skip("Disable for now")
 class TestPokerHandSortingPerformance(unittest.TestCase):
     def test_time_to_sort(self):
         dealer = Dealer()
@@ -248,7 +247,6 @@ class TestPokerHandSortingPerformance(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    _logger = logging.getLogger(__name__)
     logging.basicConfig(
         level=logging.DEBUG,
         format='%(asctime)-15s - %(levelname)s - %(message)s'
@@ -256,19 +254,3 @@ if __name__ == "__main__":
     _logger.info("Sortable Poker Hands Tests")
     _logger.info("Author: Ed Plant")
     unittest.main()
-
-    # Run a single test (comment/uncomment as needed)
-    # https://stackoverflow.com/questions/15971735/running-a-single-test-from-unittest-testcase-via-the-command-line
-    """
-    suite = unittest.TestSuite()
-    suite.addTest(TestPokerHandValue("test_high_card"))
-    suite.addTest(TestPokerHandValue("test_pair"))
-    suite.addTest(TestPokerHandValue("test_straight"))
-    suite.addTest(TestPokerHandSorting("test_pair_beats_high_card"))
-    suite.addTest(TestPokerHandSorting("test_draw_high_card"))
-    #suite.addTest(TestPokerHandSorting("test_draw_pair"))
-    suite.addTest(TestPokerHandSortingPerformance("test_time_to_sort"))
-    suite.addTest(TestPokerHandSorting("test_draw_same"))
-    runner = unittest.TextTestRunner()
-    runner.run(suite)
-    """
