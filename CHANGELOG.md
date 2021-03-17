@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.3] - 2020-03-17
+
+### Changed
+
+- Enum ALL_CAPS style
+
 ## [0.0.2] - 2020-03-16
 
 ### Added
